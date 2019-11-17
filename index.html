@@ -3,11 +3,50 @@
     <head>
         <meta charset="utf-8">
         <title>AllegroSearcher</title>
-        <link rel="stylesheet" href="/styles/global.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles/global.css">
     </head>
     <body>
+        <div class="pt-3 pb-3 col-sm-3 container text-center">
+          <h3 class="txt">Marcin</h3>
 
-        <!-- TU INTERFEJS aaa -->
+          <div class="form-group txt">
+            <input type="text" class="form-control" placeholder="Czego szukasz?" id="name" name="productName">
+          </div>
+          <div class="form-group txt">
+            Cena:
+            <input type="text" class="w-25 form-control-inline" placeholder=" od" id="cmin" name="cenamin">
+            -
+            <input type="text" class="w-25 form-control-inline" placeholder=" do" id="cmax" name="canemax">
+          </div>
+          <div class="txt">Sortuj po:</div>
+          <div class="btn-group">
+            <button type="button" class="w-25 btn btn-primary" id="sortc" name="sort">Cena</button>
+            <button type="button" class="w-25 btn btn-primary" id="sortr" name="sort">Reputacja</button>
+          </div>
+          <div class="pb-2 pt-3">
+            <button type="button" class="mx-auto btn btn-primary" id="list">Dodaj do listy</button>
+          </div>
+          <div class="pb-2 text-left container clearfix">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">First item
+              <button type="button" class="close"> &times;</button></li>
+              <li class="list-group-item">Second item
+              <button type="button" class="close"> &times;</button></li>
+              <li class="list-group-item">Third item
+              <button type="button" class="close"> &times;</button></li>
+              <li class="list-group-item">Fourth item
+              <button type="button" class="close"> &times;</button></li>
+              <li class="list-group-item">Fifth item
+              <button type="button" class="close"> &times;</button></li>
+            </ul>
+          </div>
+          <div>
+            <button type="button" class="mx-auto btn btn-primary" id="search">Szukaj</button>
+          </div>
+        </div>
+
 
         <script type="text/javascript" src="scripts/main.js"></script>
         <script type="text/javascript" src="scripts/sendSearch.js"></script>
