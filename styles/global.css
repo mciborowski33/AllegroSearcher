@@ -1,5 +1,9 @@
 body{
+  background-image: url("../img/upfeathers.png");
   font-family: 'Josefin Sans', sans-serif;
+}
+.racoon{
+  width: 120px;
 }
 .btn-primary, .btn-primary:visited{
   background-color: #ECE6DA;
@@ -34,5 +38,5 @@ body{
   background-color: #ECE6DA;
 }
 .container{
-  background-color: #DB007C; 
+  background-color: #DB007C;
 }
