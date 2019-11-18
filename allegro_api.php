@@ -53,11 +53,51 @@ function getMainCategories(String $token): stdClass
     return $categoriesList;
 }
 
+function findFirstLeaf(String $parentId, String $token): stdClass
+{
+    $getCategoriesUrl = "https://api.allegro.pl.allegrosandbox.pl/sale/categories";
+    $query = ['parent.id' => $parentId];
+    $getChildrenUrl = $getCategoriesUrl . '?' . http_build_query($query);
+
+    $ch = curl_init($getChildrenUrl);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Authorization: Bearer $token",
+        "Accept: application/vnd.allegro.public.v1+json"
+    ]);
+
+    $categoriesResult = curl_exec($ch);
+    $resultCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($categoriesResult === false || $resultCode !== 200) {
+        exit ("Something went wrong");
+    }
+
+    $categoriesList = json_decode($categoriesResult);
+    $category = $categoriesList->categories[0];
+
+    if ($category->leaf === true) {
+        return $category;
+    } else {
+        return findFirstLeaf($category->id, $token);
+    }
+}
+
 function main()
 {
     $token = getAccessToken();
+<<<<<<< HEAD:scripts/allegro_api.php
     echo ($token);
     //var_dump(getMainCategories($token));
+=======
+    $mainCategories = getMainCategories($token);
+
+    $firstLeafCategory = findFirstLeaf($mainCategories->categories[0]->id, $token);
+    var_dump($firstLeafCategory);
+
+>>>>>>> fd1a53ddd938f33205ae07757446dceaace07dd0:allegro_api.php
 }
 
 main();
