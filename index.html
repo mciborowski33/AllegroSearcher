@@ -27,24 +27,13 @@
             <button type="button" class="w-25 btn btn-primary" id="sortR" name="sort">Reputacja</button>
           </div>
           <div class="pb-2 pt-3">
-            <button type="button" class="mx-auto btn btn-primary" id="addToList">Dodaj do listy</button>
+            <button type="button" class="mx-auto btn btn-primary" id="addToList" onclick="appendToList()">Dodaj do listy</button>
           </div>
           <div class="pb-2 text-left container clearfix">
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">First item
-              <button type="button" class="close"> &times;</button></li>
-              <li class="list-group-item">Second item
-              <button type="button" class="close"> &times;</button></li>
-              <li class="list-group-item">Third item
-              <button type="button" class="close"> &times;</button></li>
-              <li class="list-group-item">Fourth item
-              <button type="button" class="close"> &times;</button></li>
-              <li class="list-group-item">Fifth item
-              <button type="button" class="close"> &times;</button></li>
-            </ul>
+            <ul class="list-group list-group-flush" id="productList"></ul>
           </div>
           <div>
-            <button type="button" class="mx-auto btn btn-primary" id="searchProducts">Szukaj</button>
+            <button type="button" class="mx-auto btn btn-primary" id="searchProducts" onclick="hide()">Szukaj</button>
           </div>
         </div>
 
@@ -81,7 +70,7 @@
             </ul>
           </div>
           <div>
-            <button type="button" class="mx-auto btn btn-primary" id="back">Wróć</button>
+            <button type="button" class="mx-auto btn btn-primary" id="back" onclick="hide()">Wróć</button>
           </div>
         </div>
 
