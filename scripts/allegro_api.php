@@ -88,16 +88,8 @@ function findFirstLeaf(String $parentId, String $token): stdClass
 function main()
 {
     $token = getAccessToken();
-<<<<<<< HEAD:scripts/allegro_api.php
     echo ($token);
     //var_dump(getMainCategories($token));
-=======
-    $mainCategories = getMainCategories($token);
-
-    $firstLeafCategory = findFirstLeaf($mainCategories->categories[0]->id, $token);
-    var_dump($firstLeafCategory);
-
->>>>>>> fd1a53ddd938f33205ae07757446dceaace07dd0:allegro_api.php
 }
 
 main();
