@@ -1,7 +1,9 @@
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const socketio = require('socket.io');
 const express = require('express');
+const runner = require("child_process");
 const app = express();
 
 const port = 80;
@@ -11,29 +13,16 @@ app.use('/scripts', express.static('scripts'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.listen(port, () => console.log(`App listening on port ${port}!`));
 
-app.get('/allegroCode.html', (req, res) => res.sendFile(__dirname + '/allegroCode.html'));
+app.get("/allegroCode.html", function(request, response) {
 
-app.get("/allegro", function(request, response) {
-    response.redirect('https://allegro.pl/auth/oauth/authorize?response_type=code&client_id=a16004d41096431198bc9baf3d58aa0c&redirect_uri=http://localhost/allegroCode.html')
-    }
-/*
-    var options = {
-        host: "https://allegro.pl/auth/oauth/authorize?response_type=code&client_id=a16004d41096431198bc9baf3d58aa0c&redirect_uri=http://localhost/allegro",
-        port: 80,
-        method: 'GET',
-        path: '/',
-        //username: 'a16004d41096431198bc9baf3d58aa0c',
-        //password: 'ADTNwyWVNJKQ8YpJR4G4svF0mAA0aosD8FnNzcqgsRvquLU9X4fPdVczPjSvJBwq'
-    };
+    response.sendFile(__dirname + '/allegroCode.html');
 
-  var proxyRequest = http.request( options,
-    function (proxyResponse) {
-      proxyResponse.on('data', function (chunk) {
-        //response.send(chunk);
-        alert(chunk);
-      });
+    var phpScriptPath = "scripts/allegro_api.php";
+    //var argsString = "value1,value2,value3";
+    var argsString = "";
+    runner.exec("php " + phpScriptPath + " " +argsString, function(err, phpResponse, stderr) {
+     if(err) console.log(err); /* log error */
+    console.log( phpResponse );
     });
-*/
-  //proxyRequest.write(response.body);
-  //proxyRequest.end();
-);
+
+});

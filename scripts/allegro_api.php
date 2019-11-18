@@ -56,8 +56,8 @@ function getMainCategories(String $token): stdClass
 function main()
 {
     $token = getAccessToken();
-    var_dump(getMainCategories($token));
-
+    echo ($token);
+    //var_dump(getMainCategories($token));
 }
 
 main();
