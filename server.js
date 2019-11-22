@@ -1,17 +1,18 @@
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const io = require('socket.io');
 const express = require('express');
 const runner = require("child_process");
-const app = express();
+const app = require('express')();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 const port = 80;
 app.use('/img', express.static('img'));
 app.use('/styles', express.static('styles'));
 app.use('/scripts', express.static('scripts'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
-app.listen(port, () => console.log(`App listening on port ${port}!`));
+server.listen(port, () => console.log(`App listening on port ${port}!`));
 
 function allegroApi(mode, data){
 
