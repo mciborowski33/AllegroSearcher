@@ -1,7 +1,7 @@
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const socketio = require('socket.io');
+const io = require('socket.io');
 const express = require('express');
 const runner = require("child_process");
 const app = express();
@@ -13,9 +13,7 @@ app.use('/scripts', express.static('scripts'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.listen(port, () => console.log(`App listening on port ${port}!`));
 
-app.get("/allegroCode.html", function(request, response) {
-
-    response.sendFile(__dirname + '/allegroCode.html');
+function allegroApi(mode, data){
 
     var phpScriptPath = "scripts/allegro_api.php";
     //var argsString = "value1,value2,value3";
@@ -24,5 +22,16 @@ app.get("/allegroCode.html", function(request, response) {
      if(err) console.log(err); /* log error */
     console.log( phpResponse );
     });
+
+}
+
+io.on('connection', function (socket) {
+
+  socket.emit('news', { hello: 'world' });
+
+  socket.on('receive Data to search', function (data) {
+    console.log(data);
+    // allegroApi( 1, data )
+  });
 
 });
