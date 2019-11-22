@@ -87,8 +87,14 @@ function findFirstLeaf(String $parentId, String $token): stdClass
 
 function main()
 {
-    $token = getAccessToken();
-    echo ($token);
+    global $argc, $argv;
+
+    $mode = $argv[1];
+
+    if( $mode == "1" ){
+        $token = getAccessToken();
+        echo (strval($token));
+    }
     //var_dump(getMainCategories($token));
 }
 

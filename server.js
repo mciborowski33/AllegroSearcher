@@ -14,25 +14,34 @@ app.use('/scripts', express.static('scripts'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 server.listen(port, () => console.log(`App listening on port ${port}!`));
 
-function allegroApi(mode, data){
+let accessToken = "0";
 
+function allegroApi(mode = "0", data = "0"){
+
+    console.log(mode);
     var phpScriptPath = "scripts/allegro_api.php";
     //var argsString = "value1,value2,value3";
-    var argsString = "";
+    var argsString = mode + " " + accessToken + " " + data;
+    console.log(argsString);
     runner.exec("php " + phpScriptPath + " " +argsString, function(err, phpResponse, stderr) {
-     if(err) console.log(err); /* log error */
-    console.log( phpResponse );
+        if(err) console.log(err); /* log error */
+            console.log( phpResponse );
+            return phpResponse.toString();
     });
 
 }
 
 io.on('connection', function (socket) {
 
-  socket.emit('news', { hello: 'world' });
+    accessToken = allegroApi(1, "0");
+    console.log(accessToken);
+    setInterval(function(){ accessToken = allegroApi(1, "0"); }, 43200000);
 
-  socket.on('receive Data to search', function (data) {
-    console.log(data);
-    // allegroApi( 1, data )
-  });
+    socket.emit('news', { hello: 'world' });
+
+    socket.on('receive Data to search', function (data) {
+        console.log(data);
+        // allegroApi( 2, data )
+    });
 
 });
