@@ -25,7 +25,7 @@ function getAccessToken(): String
 
     $tokenObject = json_decode($tokenResult);
 
-    return $tokenObject->access_token;
+    return json_encode($tokenObject);
 }
 
 function getMainCategories(String $token): stdClass

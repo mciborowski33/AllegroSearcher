@@ -1,5 +1,5 @@
 var socket = io.connect('http://localhost');
-    socket.on('news', function (data) {
+    socket.on('token', function (data) {
     console.log(data);
-    socket.emit('test', { my: 'data' });
+    //socket.emit('test', { my: 'data' });
 });
