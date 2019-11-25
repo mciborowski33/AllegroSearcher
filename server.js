@@ -43,17 +43,24 @@ function allegroApi(mode = "0", data = "0"){
             //return phpResponse.toString();
             if( mode == "1" )
                 setAccessToken(phpResponse);
+            else if( mode == "2" ){
+                sendDisplayData(phpResponse);
+            }
     });
 
 }
 
 io.on('connection', function (socket) {
 
-    socket.emit('token', { token: accessToken });
+    socket.emit('Hello', { hello: "Hello world" });
 
-    socket.on('receive Data to search', function (data) {
+    socket.on('searchData', function (data) {
         console.log(data);
-        // allegroApi( 2, data )
+        allegroApi( 2, data )
     });
+
+    function sendDisplayData(data){
+        socket.emit('results', data);
+    }
 
 });
