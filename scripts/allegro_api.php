@@ -98,7 +98,7 @@ function main()
     if( $mode == "2" ){
         $token = $argv[2];
         $data = $argv[3];
-        echo "Tu bedą wyniki wyszukiwania";
+        echo $data;
     }
     //var_dump(getMainCategories($token));
 }
