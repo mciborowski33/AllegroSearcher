@@ -1,7 +1,7 @@
 window.onload = function() {
   //alert("JS działa.")
 
-  document.getElementById('d2').style.display="none";
+  //document.getElementById('d2').style.display="none";
   document.getElementById('d1').style.display="block";
 };
 var a = 0;
