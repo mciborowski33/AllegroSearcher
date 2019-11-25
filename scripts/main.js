@@ -93,3 +93,5 @@ function removeFromList(){
   console.log(product_array);
   document.getElementById('productList').removeChild(target.parentNode);
 }
+
+document.getElementById('searchProducts').addEventListener("click", sendSearch(JSON.stringify(product_array));
