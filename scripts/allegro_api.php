@@ -28,6 +28,7 @@ function getAccessToken(): String
     return json_encode($tokenObject);
 }
 
+
 function getMainCategories(String $token): stdClass
 {
     $getCategoriesUrl = "https://api.allegro.pl.allegrosandbox.pl/sale/categories";
@@ -53,41 +54,63 @@ function getMainCategories(String $token): stdClass
     return $categoriesList;
 }
 
-function findFirstLeaf(String $parentId, String $token): stdClass
+function getGivenProduct(String $token, String $givenProductUrl): stdClass
 {
-    $getCategoriesUrl = "https://api.allegro.pl.allegrosandbox.pl/sale/categories";
-    $query = ['parent.id' => $parentId];
-    $getChildrenUrl = $getCategoriesUrl . '?' . http_build_query($query);
-
-    $ch = curl_init($getChildrenUrl);
+    $ch = curl_init($givenProductUrl);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Authorization: Bearer $token",
-        "Accept: application/vnd.allegro.public.v1+json"
+                 "Authorization: Bearer $token",
+                 "Accept: application/vnd.allegro.public.v1+json"
     ]);
 
-    $categoriesResult = curl_exec($ch);
+    $searchResult = curl_exec($ch);
     $resultCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($categoriesResult === false || $resultCode !== 200) {
+    if ($searchResult === false || $resultCode !== 200) {
         exit ("Something went wrong");
     }
 
-    $categoriesList = json_decode($categoriesResult);
-    $category = $categoriesList->categories[0];
+    $jsonSearchResult = json_decode($searchResult);
+    return $jsonSearchResult;
+}
 
-    if ($category->leaf === true) {
-        return $category;
-    } else {
-        return findFirstLeaf($category->id, $token);
-    }
+
+function setProductName(string $productName): string
+{
+  $givenProductUrl .= $productName;
+  return $productName;
+}
+
+function setMinPrice(float $minPrice): string
+{
+  $minPriceString = "&price.from=";
+  $minPriceString .= $minPrice;
+  $givenProductUrl .= $minPriceString;
+  return $minPriceString;
+}
+
+function setMaxPrice(float $maxPrice): string
+{
+  $maxPriceString = "&price.to=";
+  $maxPriceString .= $maxPrice;
+  $givenProductUrl .= $maxPriceString;
+  return $maxPriceString;
+}
+
+function setSort(string $sortType): string
+{
+  $sortTypeString = "&sort=+";
+  $sortTypeString .= $sortType;
+  $givenProductUrl .= $sortTypeString;
+  return $sortTypeString;
 }
 
 function main()
 {
     global $argc, $argv;
+    $givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase="
 
     $mode = $argv[1];
 
@@ -100,6 +123,14 @@ function main()
         $data = $argv[3];
         echo $data;
     }
+
+    setProductName("samsung");
+    setMinPrice(1000);
+    setMaxPrice(1400.55);
+    setSort("price");
+
+    $givenProduct = getGivenProduct($token, $givenProductUrl);
+    var_dump($givenProduct);
     //var_dump(getMainCategories($token));
 }
 
