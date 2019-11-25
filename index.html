@@ -18,13 +18,13 @@
           </div>
           <div class="form-group txt">
             Cena:
-            <input type="text" class="w-25 form-control-inline" placeholder=" od" id="cmin" name="cenamin">
+            <input type="text" class="w-25 form-control-inline" placeholder=" od" id="pmin" name="pricemin">
             -
-            <input type="text" class="w-25 form-control-inline" placeholder=" do" id="cmax" name="canemax">
+            <input type="text" class="w-25 form-control-inline" placeholder=" do" id="pmax" name="pricemax">
           </div>
           <div class="txt">Sortuj po:</div>
           <div class="btn-group">
-            <button type="button" class="w-25 btn btn-primary" id="sortC" name="sort">Cena</button>
+            <button type="button" class="w-25 btn btn-primary" id="sortP" name="sort">Cena</button>
             <button type="button" class="w-25 btn btn-primary" id="sortR" name="sort">Reputacja</button>
           </div>
           <div class="pb-2 pt-3">
@@ -42,12 +42,12 @@
           <h3 class="txt">Marcin</h3>
           <h5 class="mb-n1 txt text-center">Zestaw 1 - <span class="font-weight-bold">100,24zł</span></h5>
           <div class="pb-2 text-left container clearfix">
-            <ul class="list-group list-group-flush">
-              <a href="#" class="list-group-item list-group-item-action">First item<span style="float:right">Price</span></a>
+            <ul class="list-group list-group-flush" id="resultList1">
+              <!--<a href="#" class="list-group-item list-group-item-action">First item<span style="float:right">Price</span></a>
               <a href="#" class="list-group-item list-group-item-action">Second item<span style="float:right">Price</span></a>
               <a href="#" class="list-group-item list-group-item-action">Third item<span style="float:right">Price</span></a>
               <a href="#" class="list-group-item list-group-item-action">Fourth item<span style="float:right">Price</span></a>
-              <a href="#" class="list-group-item list-group-item-action">Fifth item<span style="float:right">Price</span></a>
+              <a href="#" class="list-group-item list-group-item-action">Fifth item<span style="float:right">Price</span></a>-->
             </ul>
           </div>
           <h5 class="mb-n1 mt-2 txt text-center">Zestaw 2 - <span class="font-weight-bold">103,73zł</span></h5>
@@ -71,7 +71,7 @@
             </ul>
           </div>
           <div>
-            <button type="button" class="mx-auto btn btn-primary" id="back" onclick="hide()">Wróć</button>
+            <button type="button" class="mx-auto btn btn-primary" id="back" onclick="hide(); display()">Wróć</button>
           </div>
         </div>
 

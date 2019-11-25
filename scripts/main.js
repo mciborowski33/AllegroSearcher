@@ -46,8 +46,8 @@ function deleteFromArray(no) {
 function appendToList(){
   //var index = b;
   var name = document.getElementById('productName').value;
-  var p_min = document.getElementById('cmin').value;
-  var p_max = document.getElementById('cmax').value;
+  var p_min = document.getElementById('pmin').value;
+  var p_max = document.getElementById('pmax').value;
   var node = document.createElement("LI");
   var textnode = document.createTextNode(name);
   //var  button_name = "closeBtn" + a
