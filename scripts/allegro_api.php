@@ -122,10 +122,10 @@ function main()
     if( $mode == "2" ){
         $token = $argv[2];
         $data = $argv[3];
-        echo $data;
+        //echo $data;
         //echo "blup";
-        //$json_data = json_decode($data,true);
-        //echo (strval($json_data[0]['name']));
+        $json_data = json_decode($data,true);
+        echo (strval($json_data["searchData"][0]["name"]));
         //var_dump( $json_data );//->name;
         //$json_names = array_column($json_data, 'name');
         /*
