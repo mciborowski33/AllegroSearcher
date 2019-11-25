@@ -123,18 +123,17 @@ function main()
         $token = $argv[2];
         $data = $argv[3];
         echo $data;
-        echo "blup";
-        $json_data = json_decode($data);
-        print_r($json_data);
-        //echo $json_data;
+        //echo "blup";
+        //$json_data = json_decode($data,true);
+        //echo (strval($json_data[0]['name']));
+        //var_dump( $json_data );//->name;
         //$json_names = array_column($json_data, 'name');
+        /*
         for ($k = 0; $k < 3; $k++) {
           echo $json_data[$k]->name;
           echo "blaaaaaa";
-
-
         }
-
+*/
         $givenProductUrl = setProductName("t-shirt", $givenProductUrl);
         $givenProductUrl = setMinPrice(1, $givenProductUrl);
         $givenProductUrl = setMaxPrice(10000, $givenProductUrl);

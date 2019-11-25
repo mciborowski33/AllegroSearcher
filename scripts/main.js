@@ -96,6 +96,6 @@ function removeFromList(){
 }
 
 document.getElementById('searchProducts').addEventListener("click", function(){
-    console.log(JSON.stringify(product_array));
+    //console.log(JSON.stringify(product_array));
     sendSearch(JSON.stringify(product_array));
 });
