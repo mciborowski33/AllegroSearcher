@@ -34,13 +34,13 @@
             <ul class="list-group list-group-flush" id="productList"></ul>
           </div>
           <div>
-            <button type="button" class="mx-auto btn btn-primary" id="searchProducts" onclick="hide()">Szukaj</button>
+            <button type="button" class="mx-auto btn btn-primary" id="searchProducts" onclick="hide(); display()">Szukaj</button>
           </div>
         </div>
 
         <div class="pt-3 pb-3 mb-3 col-sm-4 container text-center" id="d2">
           <h3 class="txt">Marcin</h3>
-          <h5 class="mb-n1 txt text-center">Zestaw 1 - <span class="font-weight-bold">100,24zł</span></h5>
+          <h5 class="mb-n1 txt text-center" id="r1"><!--Zestaw 1 - <span class="font-weight-bold">100,24zł</span>--></h5>
           <div class="pb-2 text-left container clearfix">
             <ul class="list-group list-group-flush" id="resultList1">
               <!--<a href="#" class="list-group-item list-group-item-action">First item<span style="float:right">Price</span></a>
@@ -71,7 +71,7 @@
             </ul>
           </div>
           <div>
-            <button type="button" class="mx-auto btn btn-primary" id="back" onclick="hide(); display()">Wróć</button>
+            <button type="button" class="mx-auto btn btn-primary" id="back" onclick="hide()">Wróć</button>
           </div>
         </div>
 
