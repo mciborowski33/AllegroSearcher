@@ -95,6 +95,11 @@ function main()
         $token = getAccessToken();
         echo (strval($token));
     }
+    if( $mode == "2" ){
+        $token = $argv[2];
+        $data = $argv[3];
+        echo $data;
+    }
     //var_dump(getMainCategories($token));
 }
 

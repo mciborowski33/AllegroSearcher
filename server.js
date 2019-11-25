@@ -44,7 +44,8 @@ function allegroApi(mode = "0", data = "0"){
             if( mode == "1" )
                 setAccessToken(phpResponse);
             else if( mode == "2" ){
-                sendDisplayData(phpResponse);
+                console.log(phpResponse);
+                //sendDisplayData(phpResponse);
             }
     });
 
