@@ -10,7 +10,7 @@ var b = 0;
 class Product {
   constructor(name, p_min, p_max, id){
     this.name = name;
-    this.p_min = ;
+    this.p_min = p_min;
     this.p_max = p_max;
     this.id = id;
   }
