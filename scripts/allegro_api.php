@@ -111,8 +111,8 @@ function setSort(string $sortType, string $givenProductUrl): String
 function main()
 {
     global $argc, $argv;
-    //$givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase=";
-    $givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/users/43544063/ratings-summary";
+    $givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase=";
+    //$givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/users/43544063/ratings-summary";
     $mode = $argv[1];
 
     if( $mode == "1" ){
@@ -122,14 +122,26 @@ function main()
     if( $mode == "2" ){
         $token = $argv[2];
         $data = $argv[3];
-        //echo $data;
-        //$givenProductUrl = setProductName("t-shirt", $givenProductUrl);
-        //$givenProductUrl = setMinPrice(1, $givenProductUrl);
-        //$givenProductUrl = setMaxPrice(10000, $givenProductUrl);
-        //$givenProductUrl = setSort("p", $givenProductUrl);
+        echo $data;
+        echo "blup";
+        $json_data = json_decode($data);
+        print_r($json_data);
+        //echo $json_data;
+        //$json_names = array_column($json_data, 'name');
+        for ($k = 0; $k < 3; $k++) {
+          echo $json_data[$k]->name;
+          echo "blaaaaaa";
+
+
+        }
+
+        $givenProductUrl = setProductName("t-shirt", $givenProductUrl);
+        $givenProductUrl = setMinPrice(1, $givenProductUrl);
+        $givenProductUrl = setMaxPrice(10000, $givenProductUrl);
+        $givenProductUrl = setSort("d", $givenProductUrl);
         //echo $givenProductUrl;
         $givenProduct = getGivenProduct($token, $givenProductUrl);
-        echo (strval($givenProduct));
+        //echo (strval($givenProduct));
     }
 
 }
