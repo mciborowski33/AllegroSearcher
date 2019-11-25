@@ -1,8 +1,11 @@
 window.onload = function() {
   //alert("JS działa.")
 
-  //document.getElementById('d2').style.display="none";
   document.getElementById('d1').style.display="block";
+  document.getElementById("addToList").addEventListener("click", appendToList);
+  document.getElementById("searchProducts").addEventListener("click", hide);
+  document.getElementById("searchProducts").addEventListener("click", display);
+  document.getElementById("back").addEventListener("click", hide);
 };
 var a = 0;
 var b = 0;
@@ -16,8 +19,6 @@ class Product {
   }
 }
 var product_array = [];
-
-
 
 function hide(){
   if(a>0){
