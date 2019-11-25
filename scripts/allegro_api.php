@@ -54,7 +54,7 @@ function getMainCategories(String $token): stdClass
     return $categoriesList;
 }
 
-function getGivenProduct(String $token, String $givenProductUrl): stdClass
+function getGivenProduct(String $token, String $givenProductUrl): String
 {
     $ch = curl_init($givenProductUrl);
 
@@ -73,45 +73,46 @@ function getGivenProduct(String $token, String $givenProductUrl): stdClass
     }
 
     $jsonSearchResult = json_decode($searchResult);
-    return $jsonSearchResult;
+    return json_encode($jsonSearchResult);
 }
 
 
-function setProductName(string $productName): string
+function setProductName(string $productName, string $givenProductUrl): String
 {
   $givenProductUrl .= $productName;
-  return $productName;
+  //echo $givenProductUrl;
+  return $givenProductUrl;
 }
 
-function setMinPrice(float $minPrice): string
+function setMinPrice(float $minPrice, string $givenProductUrl): String
 {
   $minPriceString = "&price.from=";
   $minPriceString .= $minPrice;
   $givenProductUrl .= $minPriceString;
-  return $minPriceString;
+  return $givenProductUrl;
 }
 
-function setMaxPrice(float $maxPrice): string
+function setMaxPrice(float $maxPrice, string $givenProductUrl): String
 {
   $maxPriceString = "&price.to=";
   $maxPriceString .= $maxPrice;
   $givenProductUrl .= $maxPriceString;
-  return $maxPriceString;
+  return $givenProductUrl;
 }
 
-function setSort(string $sortType): string
+function setSort(string $sortType, string $givenProductUrl): String
 {
-  $sortTypeString = "&sort=+";
+  $sortTypeString = "&order=";
   $sortTypeString .= $sortType;
   $givenProductUrl .= $sortTypeString;
-  return $sortTypeString;
+  return $givenProductUrl;
 }
 
 function main()
 {
     global $argc, $argv;
-    $givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase="
-
+    //$givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase=";
+    $givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/users/43544063/ratings-summary";
     $mode = $argv[1];
 
     if( $mode == "1" ){
@@ -121,17 +122,16 @@ function main()
     if( $mode == "2" ){
         $token = $argv[2];
         $data = $argv[3];
-        echo $data;
+        //echo $data;
+        //$givenProductUrl = setProductName("t-shirt", $givenProductUrl);
+        //$givenProductUrl = setMinPrice(1, $givenProductUrl);
+        //$givenProductUrl = setMaxPrice(10000, $givenProductUrl);
+        //$givenProductUrl = setSort("p", $givenProductUrl);
+        //echo $givenProductUrl;
+        $givenProduct = getGivenProduct($token, $givenProductUrl);
+        echo (strval($givenProduct));
     }
 
-    setProductName("samsung");
-    setMinPrice(1000);
-    setMaxPrice(1400.55);
-    setSort("price");
-
-    $givenProduct = getGivenProduct($token, $givenProductUrl);
-    var_dump($givenProduct);
-    //var_dump(getMainCategories($token));
 }
 
 main();
