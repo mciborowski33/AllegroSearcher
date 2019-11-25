@@ -7,5 +7,8 @@ var socket = io.connect('http://localhost');
 
     function sendSearch(data){
         //console.log(data);
-        socket.emit('searchData', data);
+        var tmp = data.toString().replace(/\"/g, '/');
+        console.log( typeof tmp );
+        console.log(tmp);
+        socket.emit('searchData', tmp);
     }

@@ -11,11 +11,11 @@ var a = 0;
 var b = 0;
 
 class Product {
-  constructor(name, p_min, p_max, id){
+  constructor(id, name, p_min, p_max){
+    this.id = id;
     this.name = name;
     this.p_min = p_min;
     this.p_max = p_max;
-    this.id = id;
   }
 }
 var product_array = [];
@@ -34,8 +34,8 @@ function hide(){
   }
 }
 
-function addProduct(name, p_min, p_max, id) {
-  const product = new Product(name, p_min, p_max, id);
+function addProduct(id, name, p_min, p_max) {
+  const product = new Product(id, name, p_min, p_max);
   product_array.push(product);
 }
 
@@ -63,7 +63,7 @@ function appendToList(){
     node.appendChild(textnode);
     node.appendChild(closeBtn);
     document.getElementById('productList').appendChild(node);
-    addProduct(name, p_min, p_max, b);
+    addProduct(b, name, p_min, p_max);
     b++;
   }
 }
