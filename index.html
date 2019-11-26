@@ -14,13 +14,13 @@
         <div class="pt-3 pb-3 col-sm-3 container text-center" id="d1">
           <h3 class="txt">Marcin</h3>
           <div class="form-group txt">
-            <input type="text" class="form-control" placeholder="Czego szukasz?" id="productName" name="productName">
+            <input type="text" class="form-control" placeholder="Czego szukasz?" id="productName" name="productName" onkeypress="return isAllowedKey(event)">
           </div>
           <div class="form-group txt">
             Cena:
-            <input type="text" class="w-25 form-control-inline" placeholder=" od" id="pmin" name="pricemin">
+            <input type="text" class="w-25 form-control-inline" placeholder=" od" id="pmin" name="pricemin" onkeypress="return isNumberKey(event)">
             -
-            <input type="text" class="w-25 form-control-inline" placeholder=" do" id="pmax" name="pricemax">
+            <input type="text" class="w-25 form-control-inline" placeholder=" do" id="pmax" name="pricemax" onkeypress="return isNumberKey(event)">
           </div>
           <div class="txt">Sortuj po:</div>
           <div class="btn-group">
