@@ -77,6 +77,7 @@ function getGivenProduct(String $token, String $givenProductUrl): String
 }
 
 /*
+
 function setProductName(string $productName, string $givenProductUrl): String
 {
   $givenProductUrl .= $productName;
@@ -182,11 +183,12 @@ function main()
         */
         //$givenProductUrl = setURL($givenProductUrl, "t-shirt", 1, 10000);
         echo("blablab");
-        //for ($k = 0; $k < sizeof($json_array); $k++ ) {
-        //  echo($urlArray[$k]);
-        //}
+        for ($k = 0; $k < sizeof($json_array); $k++ ) {
+          //echo($urlArray[$k]);
+          $givenProduct = getGivenProduct($token, $urlArray[$k]);
+        }
 
-        $givenProduct = getGivenProduct($token, $urlArray[0]);
+
         echo (strval($givenProduct));
     }
 
