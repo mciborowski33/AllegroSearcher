@@ -76,7 +76,7 @@ function getGivenProduct(String $token, String $givenProductUrl): String
     return json_encode($jsonSearchResult);
 }
 
-
+/*
 function setProductName(string $productName, string $givenProductUrl): String
 {
   $givenProductUrl .= $productName;
@@ -107,6 +107,27 @@ function setSort(string $sortType, string $givenProductUrl): String
   $givenProductUrl .= $sortTypeString;
   return $givenProductUrl;
 }
+*/
+
+function setURL(string $givenProductUrl, string $productName, string $minPrice, string $maxPrice): String
+{
+  $givenProductUrl .= $productName;
+
+  $minPriceString = "&price.from=";
+  $minPriceString .= $minPrice;
+  $givenProductUrl .= $minPriceString;
+
+  $maxPriceString = "&price.to=";
+  $maxPriceString .= $maxPrice;
+  $givenProductUrl .= $maxPriceString;
+
+  $sortTypeString = "&order=p";
+  //$sortTypeString .= $sortType;
+  $givenProductUrl .= $sortTypeString;
+
+  return $givenProductUrl;
+
+}
 
 function main()
 {
@@ -128,12 +149,12 @@ function main()
         echo $data;
         $json_data = json_decode($data);
         if (json_last_error() === JSON_ERROR_NONE) {
-    //do something with $json. It's ready to use
-    echo ("YES");
-} else {
-    //yep, it's not JSON. Log error or alert someone or do nothing
-    echo ("ERROR");
-}
+        //do something with $json. It's ready to use
+        echo ("YES");
+        } else {
+        //yep, it's not JSON. Log error or alert someone or do nothing
+        echo ("ERROR");
+        }
         //echo (strval($json_data['searchData'][0]['name']));
         var_dump( $json_data );//->name;
         //$json_names = array_column($json_data, 'name');
@@ -142,14 +163,31 @@ function main()
           echo $json_data[$k]->name;
           echo "blaaaaaa";
         }
-*/
+
+        */
+        $urlArray = array();
+        $json_array = $json_data->searchData;
+        echo( sizeof($json_array));
+        for ($k = 0; $k < sizeof($json_array); $k++ ) {
+          $productName = $json_array[$k]->name;
+          $urlArray[$k] = setURL($givenProductUrl, $json_array[$k]->name, $json_array[$k]->p_min, $json_array[$k]->p_max);
+        }
+        //$productName = $json_array[0]->name;
+        //echo($productName);
+        /*
         $givenProductUrl = setProductName("t-shirt", $givenProductUrl);
         $givenProductUrl = setMinPrice(1, $givenProductUrl);
         $givenProductUrl = setMaxPrice(10000, $givenProductUrl);
         $givenProductUrl = setSort("d", $givenProductUrl);
-        //echo $givenProductUrl;
-        $givenProduct = getGivenProduct($token, $givenProductUrl);
-        //echo (strval($givenProduct));
+        */
+        //$givenProductUrl = setURL($givenProductUrl, "t-shirt", 1, 10000);
+        echo("blablab");
+        //for ($k = 0; $k < sizeof($json_array); $k++ ) {
+        //  echo($urlArray[$k]);
+        //}
+
+        $givenProduct = getGivenProduct($token, $urlArray[0]);
+        echo (strval($givenProduct));
     }
 
 }
