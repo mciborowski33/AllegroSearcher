@@ -43,3 +43,7 @@ body{
 #d2{
   display: none;
 }
+.my-placeholder::-webkit-input-placeholder {
+    color: #DC3545;
+    font-weight: bold;
+ }

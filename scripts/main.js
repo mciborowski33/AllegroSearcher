@@ -46,25 +46,44 @@ function deleteFromArray(no) {
 
 function appendToList(){
   //var index = b;
+  var nameBox = document.getElementById('productName');
   var name = document.getElementById('productName').value;
   var p_min = document.getElementById('pmin').value;
   var p_max = document.getElementById('pmax').value;
   var node = document.createElement("LI");
   var textnode = document.createTextNode(name);
+  var sp = document.createElement("SPAN");
   //var  button_name = "closeBtn" + a
   var closeBtn = document.createElement("BUTTON");
+  if(p_min == ""){
+    p_min = 0;
+  }
+  if(p_max == ""){
+    p_max = 0;
+  }
+  sp.innerHTML = " " + p_min + "-" + p_max + "zł";
   closeBtn.innerHTML = "&times;";
   closeBtn.classList.add("close");
   closeBtn.setAttribute("id", b);
   closeBtn.setAttribute("onclick", "removeFromList()");
   node.classList.add("list-group-item");
-  if(a<5){
-    a++;
-    node.appendChild(textnode);
-    node.appendChild(closeBtn);
-    document.getElementById('productList').appendChild(node);
-    addProduct(b, name, p_min, p_max);
-    b++;
+  if(a<5 && (p_max-p_min) >= 0){
+    if(name != ""){
+      nameBox.classList.remove("is-invalid", "my-placeholder");
+      nameBox.setAttribute("placeholder", "Czego szukasz?");
+      a++;
+      node.appendChild(textnode);
+      if(!(p_min == 0 && p_max == 0)){
+          node.appendChild(sp);
+      }
+      node.appendChild(closeBtn);
+      document.getElementById('productList').appendChild(node);
+      addProduct(b, name, p_min, p_max);
+      b++;
+    }else{
+      nameBox.classList.add("is-invalid", "my-placeholder");
+      nameBox.setAttribute("placeholder", "To pole nie może być puste");
+    }
   }
 }
 function removeFromList(){

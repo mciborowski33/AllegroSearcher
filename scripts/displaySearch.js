@@ -6,19 +6,26 @@ var socket = io.connect('http://localhost');
 });
 
 function display(){
-  var name = document.getElementById('productName').value;
   var price = "Cena";
-  var prodPrice = "Price";
+  var listLength = 3;
   var sp1 = document.createElement("SPAN");
-  var sp2 = document.createElement("SPAN");
-  var node = document.createElement("A");
   var title = document.getElementById('r1');
   sp1.classList.add("font-weight-bold");
   sp1.innerHTML = price;
-  sp2.style= "float:right";
-  sp2.innerHTML = prodPrice;
   title.innerHTML = "Zestaw 1 - ";
   title.appendChild(sp1);
+  for(i=0; i<listLength; i++ ){
+    displayItem();
+  }
+}
+
+function displayItem(){
+  var name = document.getElementById('productName').value;
+  var prodPrice = "Price";
+  var sp2 = document.createElement("SPAN");
+  var node = document.createElement("A");
+  sp2.style= "float:right";
+  sp2.innerHTML = prodPrice;
   node.innerHTML = name;
   node.appendChild(sp2);
   node.setAttribute("href", "#");
