@@ -1,13 +1,18 @@
 var socket = io.connect('http://localhost');
     socket.on('results', function (data) {
-    console.log(data);
+    //console.log(data);
+    var result = JSON.parse(data);
+    console.log(result);
+    var product = result[0][0].name;
+    console.log(product);
     display();
     //socket.emit('test', { my: 'data' });
 });
 
 function display(){
+
   var price = "Cena";
-  var listLength = 3;
+  var listLength = product_array.length;
   var sp1 = document.createElement("SPAN");
   var title = document.getElementById('r1');
   sp1.classList.add("font-weight-bold");

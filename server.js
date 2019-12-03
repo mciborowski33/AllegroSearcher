@@ -21,8 +21,7 @@ let accessToken = "0";
 
 function init(){
     allegroApi(1, "0");
-    //console.log(accessToken);
-    setInterval(function(){ allegroApi(1, "0"); }, 43200000);
+    setInterval(function(){ accessToken = allegroApi(1, "0"); }, 43200000);
 }
 
 function setAccessToken(newToken){
@@ -45,23 +44,26 @@ function allegroApi(mode = "0", data = "0"){
                 setAccessToken(phpResponse);
             else if( mode == "2" ){
                 console.log(phpResponse);
-                //sendDisplayData(phpResponse);
+                sendDisplayData(phpResponse);
             }
     });
 
 }
 
+let globalSocket;
+
+function sendDisplayData(data){
+    globalSocket.emit('results', data);
+}
+
 io.on('connection', function (socket) {
 
+    globalSocket = socket;
     socket.emit('Hello', { hello: "Hello world" });
 
     socket.on('searchData', function (data) {
         console.log(data);
-        allegroApi( 2, data )
+        allegroApi( 2, data );
     });
-
-    function sendDisplayData(data){
-        socket.emit('results', data);
-    }
 
 });

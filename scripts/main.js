@@ -4,7 +4,7 @@ window.onload = function() {
   document.getElementById('d1').style.display="block";
   document.getElementById("addToList").addEventListener("click", appendToList);
   document.getElementById("searchProducts").addEventListener("click", hide);
-  document.getElementById("searchProducts").addEventListener("click", display);
+  //document.getElementById("searchProducts").addEventListener("click", display);
   document.getElementById("back").addEventListener("click", hide);
   document.getElementById("back").addEventListener("click", clear);
 };
