@@ -56,8 +56,10 @@ function setURL(givenProductUrl, productName, minPrice, maxPrice)
   minPriceString = "&price.from=" + minPrice;
   givenProductUrl += minPriceString;
 
-  maxPriceString = "&price.to=" + maxPrice;
-  givenProductUrl += maxPriceString;
+  if( maxPrice != '0'){
+      maxPriceString = "&price.to=" + maxPrice;
+      givenProductUrl += maxPriceString;
+  }
 
   sortTypeString = "&order=d";
   givenProductUrl += sortTypeString;
@@ -112,10 +114,11 @@ function selectBest(givenProductArray){
     regularProducts = [];
     numberOfSelectedProduct = givenProductArray.length;
     numberOfItems = [];
-    sellersList = [[],[]];
+    sellersList = [];
 
     for (k = 0; k<numberOfSelectedProduct; k++ ){
         numberOfItems[k] = givenProductArray[k].items.promoted.length;
+        sellersList[k] = [];
         for (j = 0; j < numberOfItems[k]; j++ ){
             sellersList[k][j] = givenProductArray[k].items.promoted[j].seller.id;
         }
@@ -139,9 +142,11 @@ function selectBest(givenProductArray){
       }
     }
     exit = [];
+    finalExit = '';
     if (differentsellers == true) {
         //echo("taaaaak");
         for (k =0; k <3; k++){
+            exit[k] = [];
             for (j = 0; j < numberOfSelectedProduct; j++) {
                 exit[k][j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
             }
@@ -150,13 +155,7 @@ function selectBest(givenProductArray){
         console.log(finalExit);
     }
 
-    best[0] = 0;
-    best[1] = 1;
-    best[2] = 2;
-    //return best;
-
-
-    //globalSocket.emit( /* tutaj gotowy json do przeglądarki */ );
+    globalSocket.emit( 'results', finalExit );
 }
 
 io.on('connection', function (socket) {
