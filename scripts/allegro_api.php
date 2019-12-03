@@ -1,5 +1,7 @@
 <?php
 
+
+
 function getAccessToken(): String
 {
     $authUrl = 'https://allegro.pl.allegrosandbox.pl/auth/oauth/token?grant_type=client_credentials';
@@ -55,6 +57,32 @@ function getGivenProduct(String $token, String $givenProductUrl)//: String
     return $jsonSearchResult;
 }
 
+function getSellerReputation(String $token, String $sellerId)//: String
+{
+    $sellerUrl = "https://api.allegro.pl.allegrosandbox.pl/users/43974801/ratings-summary";
+    //$givenProductUrl .= $sellerId;
+    //$givenProductUrl .= "/ratings-summary";
+    $ch = curl_init($sellerUrl);
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                 "Authorization: Bearer $token",
+                 "Accept: application/vnd.allegro.public.v1+json"
+    ]);
+
+    $searchResult = curl_exec($ch);
+    $resultCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($searchResult === false || $resultCode !== 200) {
+        exit ("Something went wrong12345");
+    }
+
+    $jsonSearchResult = json_decode($searchResult);
+    //return json_encode($jsonSearchResult);
+    return $jsonSearchResult;
+}
+
 
 function setURL(string $givenProductUrl, string $productName, string $minPrice, string $maxPrice): String
 {
@@ -68,7 +96,7 @@ function setURL(string $givenProductUrl, string $productName, string $minPrice, 
   $maxPriceString .= $maxPrice;
   $givenProductUrl .= $maxPriceString;
 
-  $sortTypeString = "&order=p";
+  $sortTypeString = "&order=d";
   $givenProductUrl .= $sortTypeString;
 
   return $givenProductUrl;
@@ -79,18 +107,19 @@ function selectBest($givenProductArray)
 {
     $regularProducts = array();
     //$regularProducts = $givenProductArray(0)->items->regular;
-    $len = sizeof($givenProductArray);
-    echo($len);
+    $numberOfSelectedProduct = sizeof($givenProductArray);
+    echo($numberOfSelectedProduct);
     //echo("ania123");
     $numberOfItems = array();
     $sellersList = array();
 
 
-    for ($k = 0; $k < $len; $k++ ){
+    for ($k = 0; $k < $numberOfSelectedProduct; $k++ ){
       $numberOfItems[$k] = sizeof($givenProductArray[$k]->items->regular);
       for ($j = 0; $j < $numberOfItems[$k]; $j++ ){
-        $sellersList[$j] = $givenProductArray[$k]->items->regular[$j]->seller->id;
-        echo($sellersList[$j]);
+        //$sellerId = $givenProductArray[$k]->items->regular[$j]->seller->id;
+        $sellersList[$k][$j] = $givenProductArray[$k]->items->regular[$j]->seller->id;
+        echo($sellersList[$k][$j]);
         echo("\n");
       }
       //var_dump($givenProductArray[0]->items->regular[0]->seller);
@@ -99,6 +128,27 @@ function selectBest($givenProductArray)
       echo("ania");
       //echo ($sellersList[$k]);
     }
+
+    echo("czy sie powtarzaja?\n");
+    for ($k = 0; $k < $numberOfSelectedProduct; $k++ ){
+      for ($j = 0; $j < $numberOfItems[$k]; $j++ ){
+        for ($n = $k+1; $n < $numberOfSelectedProduct; $n++){
+          for ($m = 0; $m < $numberOfItems[$n]; $m++ ){
+            if ($sellersList[$k][$j] == $sellersList[$n][$m]) {
+              echo("dziala tak\n");
+              echo($sellersList[$k][$j]);
+              echo("---");
+              echo($sellersList[$n][$m]);
+              echo("\n");
+
+            }
+
+          }
+        }
+      }
+    }
+
+
     $best['first'] = 0;
     $best['second'] = 1;
     $best['third'] = 2;
@@ -169,6 +219,12 @@ function main()
         //echo (strval($givenProduct));
         $best = array();
         $best = selectBest($givenProductArray);
+
+        //echo(strval(json_encode(getSellerReputation($token, 43974801))));
+        //44065306
+
+
+
     }
 
 }
