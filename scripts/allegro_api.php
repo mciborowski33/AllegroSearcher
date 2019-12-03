@@ -6,6 +6,10 @@ function getAccessToken(): String
     $clientId = "a2788f54019d4df6b0e5fb26ed83e4f2";
     $clientSecret = "ElbOONYZ7qYwpaCnfwqW27SKTKXjousSg9HpSBUsDdIUWDidP6HSwY2npQuXUhm9";
 
+    //$authUrl = 'https://allegro.pl/auth/oauth/token?grant_type=client_credentials';
+    //$clientId = "a16004d41096431198bc9baf3d58aa0c";
+    //$clientSecret = "ADTNwyWVNJKQ8YpJR4G4svF0mAA0aosD8FnNzcqgsRvquLU9X4fPdVczPjSvJBwq";
+
     $ch = curl_init($authUrl);
 
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -28,33 +32,7 @@ function getAccessToken(): String
     return json_encode($tokenObject);
 }
 
-
-function getMainCategories(String $token): stdClass
-{
-    $getCategoriesUrl = "https://api.allegro.pl.allegrosandbox.pl/sale/categories";
-
-    $ch = curl_init($getCategoriesUrl);
-
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                 "Authorization: Bearer $token",
-                 "Accept: application/vnd.allegro.public.v1+json"
-    ]);
-
-    $mainCategoriesResult = curl_exec($ch);
-    $resultCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($mainCategoriesResult === false || $resultCode !== 200) {
-        exit ("Something went wrong");
-    }
-
-    $categoriesList = json_decode($mainCategoriesResult);
-
-    return $categoriesList;
-}
-
-function getGivenProduct(String $token, String $givenProductUrl): String
+function getGivenProduct(String $token, String $givenProductUrl)//: String
 {
     $ch = curl_init($givenProductUrl);
 
@@ -69,46 +47,14 @@ function getGivenProduct(String $token, String $givenProductUrl): String
     curl_close($ch);
 
     if ($searchResult === false || $resultCode !== 200) {
-        exit ("Something went wrong");
+        exit ("Something went wrong123");
     }
 
     $jsonSearchResult = json_decode($searchResult);
-    return json_encode($jsonSearchResult);
+    //return json_encode($jsonSearchResult);
+    return $jsonSearchResult;
 }
 
-/*
-
-function setProductName(string $productName, string $givenProductUrl): String
-{
-  $givenProductUrl .= $productName;
-  //echo $givenProductUrl;
-  return $givenProductUrl;
-}
-
-function setMinPrice(float $minPrice, string $givenProductUrl): String
-{
-  $minPriceString = "&price.from=";
-  $minPriceString .= $minPrice;
-  $givenProductUrl .= $minPriceString;
-  return $givenProductUrl;
-}
-
-function setMaxPrice(float $maxPrice, string $givenProductUrl): String
-{
-  $maxPriceString = "&price.to=";
-  $maxPriceString .= $maxPrice;
-  $givenProductUrl .= $maxPriceString;
-  return $givenProductUrl;
-}
-
-function setSort(string $sortType, string $givenProductUrl): String
-{
-  $sortTypeString = "&order=";
-  $sortTypeString .= $sortType;
-  $givenProductUrl .= $sortTypeString;
-  return $givenProductUrl;
-}
-*/
 
 function setURL(string $givenProductUrl, string $productName, string $minPrice, string $maxPrice): String
 {
@@ -123,22 +69,55 @@ function setURL(string $givenProductUrl, string $productName, string $minPrice, 
   $givenProductUrl .= $maxPriceString;
 
   $sortTypeString = "&order=p";
-  //$sortTypeString .= $sortType;
   $givenProductUrl .= $sortTypeString;
 
   return $givenProductUrl;
 
 }
 
+function selectBest($givenProductArray)
+{
+    $regularProducts = array();
+    //$regularProducts = $givenProductArray(0)->items->regular;
+    $len = sizeof($givenProductArray);
+    echo($len);
+    //echo("ania123");
+    $numberOfItems = array();
+    $sellersList = array();
+
+
+    for ($k = 0; $k < $len; $k++ ){
+      $numberOfItems[$k] = sizeof($givenProductArray[$k]->items->regular);
+      for ($j = 0; $j < $numberOfItems[$k]; $j++ ){
+        $sellersList[$j] = $givenProductArray[$k]->items->regular[$j]->seller->id;
+        echo($sellersList[$j]);
+        echo("\n");
+      }
+      //var_dump($givenProductArray[0]->items->regular[0]->seller);
+      echo("\n");
+      echo($numberOfItems[$k]);
+      echo("ania");
+      //echo ($sellersList[$k]);
+    }
+    $best['first'] = 0;
+    $best['second'] = 1;
+    $best['third'] = 2;
+    return $best;
+}
+
+
+
 function main()
 {
     global $argc, $argv;
     $givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase=";
+    //$givenProductUrl = "https://api.allegro.pl/offers/listing?phrase=";
     //$givenProductUrl = "https://api.allegro.pl.allegrosandbox.pl/users/43544063/ratings-summary";
     $mode = $argv[1];
 
     if( $mode == "1" ){
         $token = getAccessToken();
+        //echo("token");
         echo (strval($token));
     }
     if( $mode == "2" ){
@@ -175,21 +154,21 @@ function main()
         }
         //$productName = $json_array[0]->name;
         //echo($productName);
-        /*
-        $givenProductUrl = setProductName("t-shirt", $givenProductUrl);
-        $givenProductUrl = setMinPrice(1, $givenProductUrl);
-        $givenProductUrl = setMaxPrice(10000, $givenProductUrl);
-        $givenProductUrl = setSort("d", $givenProductUrl);
-        */
         //$givenProductUrl = setURL($givenProductUrl, "t-shirt", 1, 10000);
         echo("blablab");
+        $givenProductArray = array();
         for ($k = 0; $k < sizeof($json_array); $k++ ) {
           //echo($urlArray[$k]);
           $givenProduct = getGivenProduct($token, $urlArray[$k]);
+          $givenProductArray[$k] = $givenProduct;
+          echo($k);
+          echo(strval(json_encode($givenProduct)));
+
         }
-
-
-        echo (strval($givenProduct));
+        //echo(strval(selectBest($givenProductArray)['second']));
+        //echo (strval($givenProduct));
+        $best = array();
+        $best = selectBest($givenProductArray);
     }
 
 }
