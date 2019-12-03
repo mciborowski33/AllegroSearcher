@@ -6,6 +6,7 @@ window.onload = function() {
   document.getElementById("searchProducts").addEventListener("click", hide);
   document.getElementById("searchProducts").addEventListener("click", display);
   document.getElementById("back").addEventListener("click", hide);
+  document.getElementById("back").addEventListener("click", clear);
 };
 var a = 0;
 var b = 0;
@@ -118,6 +119,13 @@ document.getElementById('searchProducts').addEventListener("click", function(){
     //console.log(JSON.stringify(product_array));
     sendSearch(JSON.stringify({searchData: product_array}));
 });
+
+function clear(){
+  var list = document.getElementById('resultList1');
+  while( list.firstChild ){
+    list.removeChild( list.firstChild );
+  }
+}
 
 function isNumberKey(evt){
   var charCode = (evt.which) ? evt.which : evt.keyCode;
