@@ -66,23 +66,27 @@ function setURL(givenProductUrl, productName, minPrice, maxPrice)
   return givenProductUrl;
 }
 
-const getGivenProduct = async(givenProductUrl) => {
+function getGivenProduct(givenProductUrl, givenProductArray, num){
 
     let optionsQuery = {
-      url: givenProductUrl,
+      url: givenProductUrl[num],
       headers: {
           'Authorization': 'Bearer ' + access_token,
           'Accept': 'application/vnd.allegro.public.v1+json'
       },
     };
 
-    let tmp;
     request.get(optionsQuery, function(error, response, body){
         //console.log(body);
-        console.log("Products JSON downloaded.");
-        tmp = JSON.parse(body);
-        return tmp;
+        console.log("JSON for product " + num + " downloaded.");
+        givenProductArray[num] = JSON.parse(body);
+        num+=1;
+        if( num == givenProductUrl.length )
+            selectBest( givenProductArray );
+        if( num < givenProductUrl.length )
+            getGivenProduct(givenProductUrl, givenProductArray, num);
     });
+
 }
 
 function getSellerReputation(sellerId){
@@ -96,17 +100,19 @@ function getSellerReputation(sellerId){
     };
     let tmp = "";
     request.get(optionsQuery, function(error, response, body){
-        console.log(body);
+        //console.log(body);
         tmp = JSON.parse(body);
+        return tmp;
     });
-    return tmp;
 }
 
 function selectBest(givenProductArray){
+
+    //console.log("DATA = " + JSON.stringify(givenProductArray[0]));
     regularProducts = [];
     numberOfSelectedProduct = givenProductArray.length;
     numberOfItems = [];
-    sellersList = [];
+    sellersList = [[],[]];
 
     for (k = 0; k<numberOfSelectedProduct; k++ ){
         numberOfItems[k] = givenProductArray[k].items.promoted.length;
@@ -147,34 +153,29 @@ function selectBest(givenProductArray){
     best[0] = 0;
     best[1] = 1;
     best[2] = 2;
-    return best;
+    //return best;
+
+
+    //globalSocket.emit( /* tutaj gotowy json do przeglądarki */ );
 }
 
 io.on('connection', function (socket) {
 
     globalSocket = socket;
+    socket.on('searchData', function (data){
 
-    socket.on('searchData', function (data) {
         givenProductUrl = 'https://api.allegro.pl/offers/listing?phrase=';
 
-        urlArray = [];
         json_array = JSON.parse(data).searchData;
 
+        urlArray = [];
         for (k = 0; k < json_array.length; k++ ) {
           row = json_array[k];
           urlArray[k] = setURL(givenProductUrl, row.name, row.p_min, row.p_max);
         }
-        givenProductArray = [];
-        for (k = 0; k < json_array.length; k++ ) {
-          getGivenProduct(urlArray[k]).then(givenProductArray[k]);
-        }
 
-        //console.log("PRODUKT 0\n");
-        //console.log(JSON.stringify(givenProductArray[0]));
+        let givenProductArray = [];
 
-        //best = [];
-        //best = selectBest(givenProductArray);
-
+        getGivenProduct(urlArray, givenProductArray, 0);
     });
-
 });
