@@ -6,64 +6,175 @@ const runner = require("child_process");
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const request = require('request');
 
 const port = 80;
+let globalSocket;
+
 app.use('/img', express.static('img'));
 app.use('/styles', express.static('styles'));
 app.use('/scripts', express.static('scripts'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 server.listen(port, function(){
     console.log(`App listening on port ${port}!`);
-    init()
+    init();
+    setInterval(function(){ init() }, 43200000);
 });
 
-let accessToken = "0";
+const client_id = "fb6c73e8e50b480f8c27019029f48c0f";
+const client_secret = 'OsucPMjJHv9rMNSm3fJwORUfjASJ3sEUO9u6MIyVkxB2RwZ4WcQlHC0fYZ1Za51d';
+let access_token = '';
+
+class ExitProduct{
+    constructor(name,link,price){
+        this.name = name;
+        this.link = link;
+        this.price = price;
+    }
+}
 
 function init(){
-    allegroApi(1, "0");
-    setInterval(function(){ accessToken = allegroApi(1, "0"); }, 43200000);
+    let options = {
+      url: 'https://allegro.pl/auth/oauth/token?grant_type=client_credentials',
+      headers: {
+          'Authorization': 'Basic ' + Buffer.from(client_id+':'+client_secret).toString('base64')
+      },
+    };
+
+    request.post(options, callback);
+
+    function callback(error, response, body){
+        console.log(body);
+        access_token = JSON.parse(body).access_token;
+    }
+};
+
+function setURL(givenProductUrl, productName, minPrice, maxPrice)
+{
+  givenProductUrl += productName;
+
+  minPriceString = "&price.from=" + minPrice;
+  givenProductUrl += minPriceString;
+
+  maxPriceString = "&price.to=" + maxPrice;
+  givenProductUrl += maxPriceString;
+
+  sortTypeString = "&order=d";
+  givenProductUrl += sortTypeString;
+
+  console.log("URL = " + givenProductUrl);
+  return givenProductUrl;
 }
 
-function setAccessToken(newToken){
-    //console.log("New Token: " + newToken);
-    accessToken = JSON.parse(newToken).access_token;
-}
+const getGivenProduct = async(givenProductUrl) => {
 
-function allegroApi(mode = "0", data = "0"){
+    let optionsQuery = {
+      url: givenProductUrl,
+      headers: {
+          'Authorization': 'Bearer ' + access_token,
+          'Accept': 'application/vnd.allegro.public.v1+json'
+      },
+    };
 
-    console.log(mode);
-    var phpScriptPath = "scripts/allegro_api.php";
-    //var argsString = "value1,value2,value3";
-    var argsString = mode + " " + accessToken + " " + data;
-    console.log(argsString);
-    runner.exec("php " + phpScriptPath + " " +argsString, function(err, phpResponse, stderr) {
-        if(err) console.log(err); /* log error */
-            //console.log( phpResponse );
-            //return phpResponse.toString();
-            if( mode == "1" )
-                setAccessToken(phpResponse);
-            else if( mode == "2" ){
-                console.log(phpResponse);
-                sendDisplayData(phpResponse);
-            }
+    let tmp;
+    request.get(optionsQuery, function(error, response, body){
+        //console.log(body);
+        console.log("Products JSON downloaded.");
+        tmp = JSON.parse(body);
+        return tmp;
     });
-
 }
 
-let globalSocket;
+function getSellerReputation(sellerId){
 
-function sendDisplayData(data){
-    globalSocket.emit('results', data);
+    let optionsQuery = {
+      url: 'https://api.allegro.pl.allegrosandbox.pl/users/43974801/ratings-summary',
+      headers: {
+          'Authorization': 'Bearer ' + access_token,
+          'Accept': 'application/vnd.allegro.public.v1+json'
+      },
+    };
+    let tmp = "";
+    request.get(optionsQuery, function(error, response, body){
+        console.log(body);
+        tmp = JSON.parse(body);
+    });
+    return tmp;
+}
+
+function selectBest(givenProductArray){
+    regularProducts = [];
+    numberOfSelectedProduct = givenProductArray.length;
+    numberOfItems = [];
+    sellersList = [];
+
+    for (k = 0; k<numberOfSelectedProduct; k++ ){
+        numberOfItems[k] = givenProductArray[k].items.promoted.length;
+        for (j = 0; j < numberOfItems[k]; j++ ){
+            sellersList[k][j] = givenProductArray[k].items.promoted[j].seller.id;
+        }
+    }
+    differentsellers = true;
+    //echo("czy sie powtarzaja?\n");
+    for (k = 0; k < numberOfSelectedProduct; k++ ){
+      for (j = 0; j < numberOfItems[k]; j++ ){
+        for (n = k+1; n < numberOfSelectedProduct; n++){
+          for (m = 0; m < numberOfItems[n]; m++ ){
+            if (sellersList[k][j] == sellersList[n][m]) {
+              //echo("dziala tak\n");
+              //echo($sellersList[$k][$j]);
+              //echo("---");
+              //echo($sellersList[$n][$m]);
+              //echo("\n");
+              differentsellers = false;
+            }
+          }
+        }
+      }
+    }
+    exit = [];
+    if (differentsellers == true) {
+        //echo("taaaaak");
+        for (k =0; k <3; k++){
+            for (j = 0; j < numberOfSelectedProduct; j++) {
+                exit[k][j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
+            }
+        }
+        finalExit = JSON.stringify(exit);
+        console.log(finalExit);
+    }
+
+    best[0] = 0;
+    best[1] = 1;
+    best[2] = 2;
+    return best;
 }
 
 io.on('connection', function (socket) {
 
     globalSocket = socket;
-    socket.emit('Hello', { hello: "Hello world" });
 
     socket.on('searchData', function (data) {
-        console.log(data);
-        allegroApi( 2, data );
+        givenProductUrl = 'https://api.allegro.pl/offers/listing?phrase=';
+
+        urlArray = [];
+        json_array = JSON.parse(data).searchData;
+
+        for (k = 0; k < json_array.length; k++ ) {
+          row = json_array[k];
+          urlArray[k] = setURL(givenProductUrl, row.name, row.p_min, row.p_max);
+        }
+        givenProductArray = [];
+        for (k = 0; k < json_array.length; k++ ) {
+          getGivenProduct(urlArray[k]).then(givenProductArray[k]);
+        }
+
+        //console.log("PRODUKT 0\n");
+        //console.log(JSON.stringify(givenProductArray[0]));
+
+        //best = [];
+        //best = selectBest(givenProductArray);
+
     });
 
 });
