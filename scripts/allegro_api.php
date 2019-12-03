@@ -1,6 +1,12 @@
 <?php
 
-
+class ExitProduct {
+  public function __construct($name, $link, $cost) {
+        $this->name = $name;
+        $this->link = $link;
+        $this->cost = $cost;
+        }
+}
 
 function getAccessToken(): String
 {
@@ -108,7 +114,7 @@ function selectBest($givenProductArray)
     $regularProducts = array();
     //$regularProducts = $givenProductArray(0)->items->regular;
     $numberOfSelectedProduct = sizeof($givenProductArray);
-    echo($numberOfSelectedProduct);
+    //echo($numberOfSelectedProduct);
     //echo("ania123");
     $numberOfItems = array();
     $sellersList = array();
@@ -119,27 +125,28 @@ function selectBest($givenProductArray)
       for ($j = 0; $j < $numberOfItems[$k]; $j++ ){
         //$sellerId = $givenProductArray[$k]->items->regular[$j]->seller->id;
         $sellersList[$k][$j] = $givenProductArray[$k]->items->regular[$j]->seller->id;
-        echo($sellersList[$k][$j]);
-        echo("\n");
+        //echo($sellersList[$k][$j]);
+        //echo("\n");
       }
       //var_dump($givenProductArray[0]->items->regular[0]->seller);
-      echo("\n");
-      echo($numberOfItems[$k]);
-      echo("ania");
+      //echo("\n");
+      //echo($numberOfItems[$k]);
+      //echo("ania");
       //echo ($sellersList[$k]);
     }
-
-    echo("czy sie powtarzaja?\n");
+    $differentsellers = true;
+    //echo("czy sie powtarzaja?\n");
     for ($k = 0; $k < $numberOfSelectedProduct; $k++ ){
       for ($j = 0; $j < $numberOfItems[$k]; $j++ ){
         for ($n = $k+1; $n < $numberOfSelectedProduct; $n++){
           for ($m = 0; $m < $numberOfItems[$n]; $m++ ){
             if ($sellersList[$k][$j] == $sellersList[$n][$m]) {
-              echo("dziala tak\n");
-              echo($sellersList[$k][$j]);
-              echo("---");
-              echo($sellersList[$n][$m]);
-              echo("\n");
+              //echo("dziala tak\n");
+              //echo($sellersList[$k][$j]);
+              //echo("---");
+              //echo($sellersList[$n][$m]);
+              //echo("\n");
+              $differentsellers = false;
 
             }
 
@@ -147,7 +154,17 @@ function selectBest($givenProductArray)
         }
       }
     }
-
+    $exit = array();
+    if ($differentsellers == true) {
+      //echo("taaaaak");
+      for ($k =0; $k <3; $k++){
+        for ($j = 0; $j < $numberOfSelectedProduct; $j++) {
+          $exit[$k][$j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
+        }
+      }
+    $finalExit = json_encode($exit);
+    echo($finalExit);
+    }
 
     $best['first'] = 0;
     $best['second'] = 1;
@@ -174,19 +191,19 @@ function main()
         $token = $argv[2];
         $data = $argv[3];
         //echo "blup";
-        echo $data;
+        //echo $data;
         $data = str_replace('/', '"', $data);
-        echo $data;
+        //echo $data;
         $json_data = json_decode($data);
         if (json_last_error() === JSON_ERROR_NONE) {
         //do something with $json. It's ready to use
-        echo ("YES");
+        //echo ("YES");
         } else {
         //yep, it's not JSON. Log error or alert someone or do nothing
-        echo ("ERROR");
+        //echo ("ERROR");
         }
         //echo (strval($json_data['searchData'][0]['name']));
-        var_dump( $json_data );//->name;
+        //var_dump( $json_data );//->name;
         //$json_names = array_column($json_data, 'name');
         /*
         for ($k = 0; $k < 3; $k++) {
@@ -197,7 +214,7 @@ function main()
         */
         $urlArray = array();
         $json_array = $json_data->searchData;
-        echo( sizeof($json_array));
+        //echo( sizeof($json_array));
         for ($k = 0; $k < sizeof($json_array); $k++ ) {
           $productName = $json_array[$k]->name;
           $urlArray[$k] = setURL($givenProductUrl, $json_array[$k]->name, $json_array[$k]->p_min, $json_array[$k]->p_max);
@@ -205,14 +222,14 @@ function main()
         //$productName = $json_array[0]->name;
         //echo($productName);
         //$givenProductUrl = setURL($givenProductUrl, "t-shirt", 1, 10000);
-        echo("blablab");
+        //echo("blablab");
         $givenProductArray = array();
         for ($k = 0; $k < sizeof($json_array); $k++ ) {
           //echo($urlArray[$k]);
           $givenProduct = getGivenProduct($token, $urlArray[$k]);
           $givenProductArray[$k] = $givenProduct;
-          echo($k);
-          echo(strval(json_encode($givenProduct)));
+          //echo($k);
+          //echo(strval(json_encode($givenProduct)));
 
         }
         //echo(strval(selectBest($givenProductArray)['second']));
