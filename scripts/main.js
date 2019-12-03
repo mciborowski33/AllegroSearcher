@@ -121,9 +121,12 @@ document.getElementById('searchProducts').addEventListener("click", function(){
 });
 
 function clear(){
-  var list = document.getElementById('resultList1');
-  while( list.firstChild ){
-    list.removeChild( list.firstChild );
+  for(i=1; i<4; i++){
+    id = 'resultList' + i;
+    var list = document.getElementById(id);
+    while( list.firstChild ){
+      list.removeChild( list.firstChild );
+    }
   }
 }
 

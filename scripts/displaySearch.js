@@ -3,37 +3,40 @@ var socket = io.connect('http://localhost');
     //console.log(data);
     var result = JSON.parse(data);
     console.log(result);
-    var product = result[0][0].name;
-    console.log(product);
-    display();
+    display(result);
     //socket.emit('test', { my: 'data' });
 });
 
-function display(){
-
-  var price = "Cena";
+function display(result){
   var listLength = product_array.length;
-  var sp1 = document.createElement("SPAN");
-  var title = document.getElementById('r1');
-  sp1.classList.add("font-weight-bold");
-  sp1.innerHTML = price;
-  title.innerHTML = "Zestaw 1 - ";
-  title.appendChild(sp1);
-  for(i=0; i<listLength; i++ ){
-    displayItem();
+  console.log(listLength);
+  for(i=0; i<3; i++){
+    for(j=0; j<listLength; j++){
+    var product = result[i][j];
+    var price = "Cena";
+    var sp = document.createElement("SPAN");
+    var id = 'r' + (i+1);
+    var title = document.getElementById(id);
+    sp.classList.add("font-weight-bold");
+    sp.innerHTML = price;
+    title.innerHTML = "Zestaw " + (i+1).toString() + " - ";
+    title.appendChild(sp);
+    displayItem(product, i);
+    }
   }
 }
 
-function displayItem(){
-  var name = document.getElementById('productName').value;
-  var prodPrice = "Price";
-  var sp2 = document.createElement("SPAN");
+function displayItem(product, i){
+  var name = product.name;
+  var prodPrice = product.price;
+  var sp = document.createElement("SPAN");
   var node = document.createElement("A");
-  sp2.style= "float:right";
-  sp2.innerHTML = prodPrice;
+  var id = 'resultList' + (i+1);
+  sp.style= "float:right";
+  sp.innerHTML = prodPrice;
   node.innerHTML = name;
-  node.appendChild(sp2);
+  node.appendChild(sp);
   node.setAttribute("href", "#");
   node.classList.add("list-group-item", "list-group-item-action");
-  document.getElementById('resultList1').appendChild(node);
+  document.getElementById(id).appendChild(node);
 }
