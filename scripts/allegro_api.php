@@ -98,9 +98,11 @@ function setURL(string $givenProductUrl, string $productName, string $minPrice, 
   $minPriceString .= $minPrice;
   $givenProductUrl .= $minPriceString;
 
-  $maxPriceString = "&price.to=";
-  $maxPriceString .= $maxPrice;
-  $givenProductUrl .= $maxPriceString;
+  if (intval($maxPrice) != 0) {
+    $maxPriceString = "&price.to=";
+    $maxPriceString .= $maxPrice;
+    $givenProductUrl .= $maxPriceString;
+  }
 
   $sortTypeString = "&order=d";
   $givenProductUrl .= $sortTypeString;
@@ -147,29 +149,31 @@ function selectBest($givenProductArray)
               //echo($sellersList[$n][$m]);
               //echo("\n");
               $differentsellers = false;
-
             }
-
           }
         }
       }
     }
     $exit = array();
+    $costs = array();
     if ($differentsellers == true) {
       //echo("taaaaak");
       for ($k =0; $k <3; $k++){
         for ($j = 0; $j < $numberOfSelectedProduct; $j++) {
+          $costs[$k][$j] = $givenProductArray[$k]->items->regular[$j]->delivery->lowestPrice->amount + $givenProductArray[$k]->items->regular[$j]->sellingMode->price;
           $exit[$k][$j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
         }
       }
     $finalExit = json_encode($exit);
-    echo($finalExit);
+    $finalCosts = json_encode($costs);
+    //echo($finalExit);     //nie zakomentowywac!!!
+    echo($finalCosts);
     }
 
-    $best['first'] = 0;
-    $best['second'] = 1;
-    $best['third'] = 2;
-    return $best;
+    //$best['first'] = 0;
+    //$best['second'] = 1;
+    //$best['third'] = 2;
+    return true;
 }
 
 
@@ -185,7 +189,7 @@ function main()
     if( $mode == "1" ){
         $token = getAccessToken();
         //echo("token");
-        echo (strval($token));
+        echo (strval($token));    //nie zakomentowywac!!!
     }
     if( $mode == "2" ){
         $token = $argv[2];
@@ -218,6 +222,8 @@ function main()
         for ($k = 0; $k < sizeof($json_array); $k++ ) {
           $productName = $json_array[$k]->name;
           $urlArray[$k] = setURL($givenProductUrl, $json_array[$k]->name, $json_array[$k]->p_min, $json_array[$k]->p_max);
+          //echo($urlArray[$k]);
+
         }
         //$productName = $json_array[0]->name;
         //echo($productName);
