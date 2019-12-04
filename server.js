@@ -11,6 +11,7 @@ const request = require('request');
 const port = 80;
 let globalSocket;
 
+
 app.use('/img', express.static('img'));
 app.use('/styles', express.static('styles'));
 app.use('/scripts', express.static('scripts'));
@@ -82,6 +83,7 @@ function getGivenProduct(givenProductUrl, givenProductArray, num){
         //console.log(body);
         console.log("JSON for product " + num + " downloaded.");
         givenProductArray[num] = JSON.parse(body);
+        //console.log(givenProductArray[num].items.regular);
         num+=1;
         if( num == givenProductUrl.length )
             selectBest( givenProductArray );
@@ -112,17 +114,77 @@ function selectBest(givenProductArray){
 
     //console.log("DATA = " + JSON.stringify(givenProductArray[0]));
     regularProducts = [];
+    givenProducts = [];
     numberOfSelectedProduct = givenProductArray.length;
     numberOfItems = [];
+    numberOfPromotedItems = [];
+    numberOfRegularItems = [];
     sellersList = [];
+    deliveryCosts = [];
+/*
+    for (k = 0; k<numberOfSelectedProduct; k++ ){
+        givenProducts[k] = givenProductArray[k].items.promoted;
+        givenProducts[k].push(givenProductArray[k].items.regular);
+        //console.log(givenProducts[k]);
+    }*/
 
     for (k = 0; k<numberOfSelectedProduct; k++ ){
-        numberOfItems[k] = givenProductArray[k].items.promoted.length;
+        console.log("promowane");
+        console.log(givenProductArray[k].items.promoted.length);
+        console.log("regular");
+        console.log(givenProductArray[k].items.regular.length);
+        if(givenProductArray[k].items.regular.length == 0){
+          givenProducts[k] = givenProductArray[k].items.promoted;
+        } else if(givenProductArray[k].items.promoted.length == 0){
+          givenProducts[k] = givenProductArray[k].items.regular;
+        } else if(givenProductArray[k].items.promoted.length == 0 && givenProductArray[k].items.regular.length == 0){
+          givenProducts[k] = null;
+          //moge tak? xd
+        } else{
+          givenProducts[k] = givenProductArray[k].items.regular;
+          for (i = 0; i<givenProductArray[k].items.promoted.length; i++ ){
+              givenProducts[k].push(givenProductArray[k].items.promoted[i]);
+          }
+          deliveryCosts[k] = [];
+          //algorytm sortowania po cenie
+          //givenProducts[k].sort((a, b) => (a[k].delivery.))
+          console.log("delivery.lowestPrice");
+          for (j = 0; j < givenProducts[k].length; j++ ){
+              //deliveryCosts[k][j] = givenProducts[k][j].delivery.lowestPrice.amount;
+              deliveryCosts[k][j] = givenProducts[k][j].delivery.lowestPrice.amount + givenProducts[k][j].sellingMode.price.amount;
+              console.log("for sie wypelnia");
+              console.log(deliveryCosts[k][j]);
+          }
+
+        }
+
+        //console.log(givenProducts[k]);
+
+        //console.log(givenProducts[k]);
+        //numberOfPromotedItems[k] = givenProductArray[k].items.promoted.length;
+        //numberOfRegularItems[k] = givenProductArray[k].items.regular.length;
+        //numberOfItems[k] = numberOfPromotedItems[k] + numberOfRegularItems[k];
+        numberOfItems[k] = givenProducts[k].length;
+        //console.log(numberOfPromotedItems[k]);
+        //console.log(numberOfRegularItems[k]);
+        console.log("wszystkie");
+        console.log(numberOfItems[k]);
+        //console.log(givenProducts[k]);
         sellersList[k] = [];
-        for (j = 0; j < numberOfItems[k]; j++ ){
+        /*
+        for (j = 0; j < numberOfPromotedItems[k]; j++ ){
             sellersList[k][j] = givenProductArray[k].items.promoted[j].seller.id;
         }
+        for (j = numberOfPromotedItems[k]; j < numberOfItems[k]; j++){
+            sellersList[k][j] = givenProductArray[k].items.regular[j].seller.id;
+        }
+        */
+        for (j = 0; j < numberOfItems[k]; j++ ){
+            sellersList[k][j] = givenProducts[k][j].seller.id;
+        }
+
     }
+    //console.log(sellersList);
     differentsellers = true;
     //echo("czy sie powtarzaja?\n");
     for (k = 0; k < numberOfSelectedProduct; k++ ){
@@ -130,6 +192,10 @@ function selectBest(givenProductArray){
         for (n = k+1; n < numberOfSelectedProduct; n++){
           for (m = 0; m < numberOfItems[n]; m++ ){
             if (sellersList[k][j] == sellersList[n][m]) {
+              console.log("Powtarzaja sie:\n");
+              //console.log(sellersList[k][j]);
+              //console.log("---");
+              //console.log(sellersList[n][m]);
               //echo("dziala tak\n");
               //echo($sellersList[$k][$j]);
               //echo("---");
@@ -145,6 +211,7 @@ function selectBest(givenProductArray){
     finalExit = '';
     if (differentsellers == true) {
         //echo("taaaaak");
+        console.log("nie powtarzaja sie");
         for (k =0; k <3; k++){
             exit[k] = [];
             for (j = 0; j < numberOfSelectedProduct; j++) {
