@@ -50,6 +50,15 @@ function init(){
     }
 };
 
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
 function setURL(givenProductUrl, productName, minPrice, maxPrice)
 {
   givenProductUrl += productName;
@@ -96,17 +105,19 @@ function getGivenProduct(givenProductUrl, givenProductArray, num){
 function getSellerReputation(sellerId){
 
     let optionsQuery = {
-      url: 'https://api.allegro.pl.allegrosandbox.pl/users/43974801/ratings-summary',
+      url: 'https://api.allegro.pl/users/' + sellerId + '/ratings-summary',
       headers: {
           'Authorization': 'Bearer ' + access_token,
           'Accept': 'application/vnd.allegro.public.v1+json'
       },
     };
-    let tmp = "";
+    let sellerReputation = "";
     request.get(optionsQuery, function(error, response, body){
-        //console.log(body);
-        tmp = JSON.parse(body);
-        return tmp;
+        //console.log("proba");
+        sellerReputation = JSON.parse(body);
+        //console.log("reputacja sprzedawcy");
+        console.log(sellerReputation);
+        return sellerReputation.recommendedPercentage;
     });
 }
 
@@ -121,6 +132,7 @@ function selectBest(givenProductArray){
     numberOfRegularItems = [];
     sellersList = [];
     deliveryCosts = [];
+    reputation = [];
 /*
     for (k = 0; k<numberOfSelectedProduct; k++ ){
         givenProducts[k] = givenProductArray[k].items.promoted;
@@ -146,18 +158,37 @@ function selectBest(givenProductArray){
               givenProducts[k].push(givenProductArray[k].items.promoted[i]);
           }
           deliveryCosts[k] = [];
-          //algorytm sortowania po cenie
-          //givenProducts[k].sort((a, b) => (a[k].delivery.))
+
+
           console.log("delivery.lowestPrice");
           for (j = 0; j < givenProducts[k].length; j++ ){
               //deliveryCosts[k][j] = givenProducts[k][j].delivery.lowestPrice.amount;
-              deliveryCosts[k][j] = givenProducts[k][j].delivery.lowestPrice.amount + givenProducts[k][j].sellingMode.price.amount;
-              console.log("for sie wypelnia");
-              console.log(deliveryCosts[k][j]);
+              deliveryCosts[k][j] = parseFloat(givenProducts[k][j].delivery.lowestPrice.amount) + parseFloat(givenProducts[k][j].sellingMode.price.amount);
+              givenProducts[k][j].totalCost = deliveryCosts[k][j];
+              //console.log("for sie wypelnia");
+              //console.log(deliveryCosts[k][j]);
           }
+          //console.log("rozia");
+          //console.log(givenProducts[k]);
+          //algorytm sortowania po cenie
+          givenProducts[k].sort((a, b) => (a.totalCost > b.totalCost) ? 1 : -1);
+          //console.log("rozia2");
+          //console.log(givenProducts[k]);
 
         }
+        //reputacja
+        /*
+        reputation[k] = [];
+        console.log("reputacja");
+        for (j = 0; j < givenProducts[k].length; j++ ){
+          sellerId = givenProducts[k][j].seller.id;
+          console.log(sellerId);
+          //reputation[k][j] = getSellerReputation(sellerId);
+          //sleep(100);
+          console.log(getSellerReputation(sellerId));
+        }*/
 
+        //givenProducts[k]
         //console.log(givenProducts[k]);
 
         //console.log(givenProducts[k]);
