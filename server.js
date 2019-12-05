@@ -83,7 +83,7 @@ function setURL(givenProductUrl, productName, minPrice, maxPrice)
 function getGivenProduct(givenProductUrl, givenProductArray, num){
 
     let optionsQuery = {
-      url: givenProductUrl[num],
+      url: encodeURI(givenProductUrl[num]),
       headers: {
           'Authorization': 'Bearer ' + access_token,
           'Accept': 'application/vnd.allegro.public.v1+json'
