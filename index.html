@@ -10,7 +10,7 @@
         <script src="/socket.io/socket.io.js"></script>
     </head>
     <body>
-        <img src="img/racoon.png" class="mx-auto mt-2 mb-n4 d-block racoon">
+        <img src="img/racoon.png" class="mx-auto mt-2 mb-n4 d-block racoon" id="racoon">
         <div class="pt-3 pb-3 col-sm-3 container text-center" id="d1">
           <h3 class="txt">Marcin</h3>
           <div class="form-group txt">
@@ -31,6 +31,10 @@
           <div>
             <button type="button" class="mx-auto btn btn-primary" id="searchProducts">Szukaj</button>
           </div>
+        </div>
+
+        <div id="loading">
+          <img src="img/racoon_loading.png" class="mx-auto d-block loadingRacoon">
         </div>
 
         <div class="pt-3 pb-3 mb-3 col-sm-4 container text-center" id="d2">

@@ -5,6 +5,9 @@ body{
 .racoon{
   width: 120px;
 }
+.loadingRacoon{
+  width: 40%;
+}
 .btn-primary, .btn-primary:visited{
   background-color: #ECE6DA;
   border-color: #ECE6DA;
@@ -41,6 +44,9 @@ body{
   background-color: #DB007C;
 }
 #d2{
+  display: none;
+}
+#loading{
   display: none;
 }
 .my-placeholder::-webkit-input-placeholder {

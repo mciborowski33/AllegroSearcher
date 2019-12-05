@@ -2,6 +2,7 @@ window.onload = function() {
   //alert("JS działa.")
 
   document.getElementById('d1').style.display="block";
+  document.getElementById('loading').style.display="none";
   document.getElementById("addToList").addEventListener("click", appendToList);
   document.getElementById("searchProducts").addEventListener("click", hide);
   //document.getElementById("searchProducts").addEventListener("click", display);
@@ -23,14 +24,21 @@ var product_array = [];
 
 function hide(){
   if(a>0){
-    var x = document.getElementById('d1');
-    var y = document.getElementById('d2');
-    if(x.style.display === "block"){
-      x.style.display="none";
-      y.style.display="block";
+    var d1 = document.getElementById('d1');
+    var d2 = document.getElementById('d2');
+    var l = document.getElementById('loading');
+    var r = document.getElementById('racoon');
+    if(d1.style.display === "block"){
+      d1.style.display="none";
+      l.style.display="block";
+      r.style.visibility = "hidden";
+    }else if(l.style.display === "block"){
+      l.style.display="none";
+      d2.style.display="block";
+      r.style.visibility = "visible";
     }else{
-      x.style.display="block";
-      y.style.display="none";
+      d1.style.display="block";
+      d2.style.display="none";
     }
   }
 }
