@@ -29,7 +29,7 @@ let access_token = '';
 class ExitProduct{
     constructor(name,link,price){
         this.name = name;
-        this.link = link;
+        this.link = 'https://allegro.pl/oferta/'+link;
         this.price = price;
     }
 }
@@ -133,25 +133,26 @@ function selectBest(givenProductArray){
     sellersList = [];
     deliveryCosts = [];
     reputation = [];
-/*
-    for (k = 0; k<numberOfSelectedProduct; k++ ){
-        givenProducts[k] = givenProductArray[k].items.promoted;
-        givenProducts[k].push(givenProductArray[k].items.regular);
-        //console.log(givenProducts[k]);
-    }*/
 
     for (k = 0; k<numberOfSelectedProduct; k++ ){
         console.log("promowane");
         console.log(givenProductArray[k].items.promoted.length);
         console.log("regular");
         console.log(givenProductArray[k].items.regular.length);
-        if(givenProductArray[k].items.regular.length == 0){
+        //if(givenProductArray[k].items.regular.length == 0){
+        //  givenProducts[k] = givenProductArray[k].items.promoted;
+        if(givenProductArray[k].items.promoted.length == 0 && givenProductArray[k].items.regular.length == 0){
+          //givenProducts[k] = null;
           givenProducts[k] = givenProductArray[k].items.promoted;
+          //givenProducts[k] =[];
+          //givenProducts[k][0].id = 'null';
+          console.log(givenProducts[k].length);
+          console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA");
+          //moge tak? xd
         } else if(givenProductArray[k].items.promoted.length == 0){
           givenProducts[k] = givenProductArray[k].items.regular;
-        } else if(givenProductArray[k].items.promoted.length == 0 && givenProductArray[k].items.regular.length == 0){
-          givenProducts[k] = null;
-          //moge tak? xd
+        } else if(givenProductArray[k].items.regular.length == 0){
+          givenProducts[k] = givenProductArray[k].items.promoted;
         } else{
           givenProducts[k] = givenProductArray[k].items.regular;
           for (i = 0; i<givenProductArray[k].items.promoted.length; i++ ){
@@ -159,26 +160,24 @@ function selectBest(givenProductArray){
           }
           deliveryCosts[k] = [];
 
-
-          console.log("delivery.lowestPrice");
+          //dodanie parametru totalCost
           for (j = 0; j < givenProducts[k].length; j++ ){
               //deliveryCosts[k][j] = givenProducts[k][j].delivery.lowestPrice.amount;
               deliveryCosts[k][j] = parseFloat(givenProducts[k][j].delivery.lowestPrice.amount) + parseFloat(givenProducts[k][j].sellingMode.price.amount);
               givenProducts[k][j].totalCost = deliveryCosts[k][j];
-              //console.log("for sie wypelnia");
               //console.log(deliveryCosts[k][j]);
           }
-          //console.log("rozia");
-          //console.log(givenProducts[k]);
           //algorytm sortowania po cenie
           givenProducts[k].sort((a, b) => (a.totalCost > b.totalCost) ? 1 : -1);
-          //console.log("rozia2");
           //console.log(givenProducts[k]);
 
         }
+
+
         //reputacja
-        /*
+
         reputation[k] = [];
+        /*
         console.log("reputacja");
         for (j = 0; j < givenProducts[k].length; j++ ){
           sellerId = givenProducts[k][j].seller.id;
@@ -190,26 +189,12 @@ function selectBest(givenProductArray){
 
         //givenProducts[k]
         //console.log(givenProducts[k]);
-
-        //console.log(givenProducts[k]);
-        //numberOfPromotedItems[k] = givenProductArray[k].items.promoted.length;
-        //numberOfRegularItems[k] = givenProductArray[k].items.regular.length;
-        //numberOfItems[k] = numberOfPromotedItems[k] + numberOfRegularItems[k];
         numberOfItems[k] = givenProducts[k].length;
-        //console.log(numberOfPromotedItems[k]);
-        //console.log(numberOfRegularItems[k]);
         console.log("wszystkie");
         console.log(numberOfItems[k]);
         //console.log(givenProducts[k]);
         sellersList[k] = [];
-        /*
-        for (j = 0; j < numberOfPromotedItems[k]; j++ ){
-            sellersList[k][j] = givenProductArray[k].items.promoted[j].seller.id;
-        }
-        for (j = numberOfPromotedItems[k]; j < numberOfItems[k]; j++){
-            sellersList[k][j] = givenProductArray[k].items.regular[j].seller.id;
-        }
-        */
+
         for (j = 0; j < numberOfItems[k]; j++ ){
             sellersList[k][j] = givenProducts[k][j].seller.id;
         }
@@ -224,14 +209,6 @@ function selectBest(givenProductArray){
           for (m = 0; m < numberOfItems[n]; m++ ){
             if (sellersList[k][j] == sellersList[n][m]) {
               console.log("Powtarzaja sie:\n");
-              //console.log(sellersList[k][j]);
-              //console.log("---");
-              //console.log(sellersList[n][m]);
-              //echo("dziala tak\n");
-              //echo($sellersList[$k][$j]);
-              //echo("---");
-              //echo($sellersList[$n][$m]);
-              //echo("\n");
               differentsellers = false;
             }
           }
@@ -241,14 +218,43 @@ function selectBest(givenProductArray){
     exit = [];
     finalExit = '';
     if (differentsellers == true) {
-        //echo("taaaaak");
         console.log("nie powtarzaja sie");
+        //name = givenProducts[0][0].name;
+        //console.log(name);
         for (k =0; k <3; k++){
             exit[k] = [];
             for (j = 0; j < numberOfSelectedProduct; j++) {
-                exit[k][j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
+              name = [];
+              id = [];
+              cost = [];
+              for (i = 0; i < 3; i++) {
+                if (givenProducts[j].length > 0){
+                  name[i] = givenProducts[j][i].name;
+                  console.log(name[i]);
+                  id[i] = givenProducts[j][i].id;
+                  cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
+                } else {
+                  console.log("else");
+                  name[i] = "brak wynikow";
+                  id[i] = "";
+                  cost[i] = 0;
+                }
+
+                //cost = parseFloat(givenProducts[j][0].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
+
+                //console.log(exit[k][j]);
+                //exit[k][j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
+                //exit[k][j] = new ExitProduct(name[i], id[i], cost[i]);
+                //console.log(exit[k][j]);
+              }
+
+              exit[k][j] = new ExitProduct(name[k], id[k], cost[k]);
+
+              //exit[k][j] = new ExitProduct(name, id, cost);
+
             }
         }
+        console.log(exit);
         finalExit = JSON.stringify(exit);
         console.log(finalExit);
     }
