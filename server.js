@@ -232,19 +232,30 @@ function selectBest(givenProductArray){
               name = [];
               id = [];
               cost = [];
+              count = 0;
               for (i = 0; i < 3; i++) {
                 if (givenProducts[j].length > 0){
-                  name[i] = givenProducts[j][i].name;
-                  console.log(name[i]);
-                  id[i] = givenProducts[j][i].id;
-                  del = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount);
-                  pr = parseFloat(givenProducts[j][i].sellingMode.price.amount);
+                  a = i;
+                  if(givenProducts[j].length == a){
+                    //count = count +1;
+                    a = a-1;
+                  } else if(givenProducts[j].length < a){
+                    a = a-2;
+                  }
+                  name[i] = givenProducts[j][a].name;
+                  console.log(name[a]);
+                  id[i] = givenProducts[j][a].id;
+                  del = parseFloat(givenProducts[j][a].delivery.lowestPrice.amount);
+                  pr = parseFloat(givenProducts[j][a].sellingMode.price.amount);
                   cost[i] = del + pr;
                   //cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
                   cost[i] = cost[i].toFixed(2);
-                  console.log(parseFloat(givenProducts[j][i].delivery.lowestPrice.amount));
-                  console.log(parseFloat(givenProducts[j][i].sellingMode.price.amount));
+                  console.log(parseFloat(givenProducts[j][a].delivery.lowestPrice.amount));
+                  console.log(parseFloat(givenProducts[j][a].sellingMode.price.amount));
                   console.log(cost[i]);
+                  //if(givenProducts[j].length == i+1) {
+                  //  i = i-1;
+                  //}
 
                 } else {
                   console.log("else");
