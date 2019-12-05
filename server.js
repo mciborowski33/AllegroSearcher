@@ -74,6 +74,8 @@ function setURL(givenProductUrl, productName, minPrice, maxPrice)
   sortTypeString = "&order=d";
   givenProductUrl += sortTypeString;
 
+  givenProductUrl += "&stan=nowe&offerTypeBuyNow=1";
+
   console.log("URL = " + givenProductUrl);
   return givenProductUrl;
 }
@@ -133,6 +135,8 @@ function selectBest(givenProductArray){
     sellersList = [];
     deliveryCosts = [];
     reputation = [];
+    //delivery = 0;
+    //price = 0;
 
     for (k = 0; k<numberOfSelectedProduct; k++ ){
         console.log("promowane");
@@ -217,6 +221,7 @@ function selectBest(givenProductArray){
     }
     exit = [];
     finalExit = '';
+    console.log(givenProducts[2]);
     if (differentsellers == true) {
         console.log("nie powtarzaja sie");
         //name = givenProducts[0][0].name;
@@ -232,7 +237,15 @@ function selectBest(givenProductArray){
                   name[i] = givenProducts[j][i].name;
                   console.log(name[i]);
                   id[i] = givenProducts[j][i].id;
-                  cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
+                  del = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount);
+                  pr = parseFloat(givenProducts[j][i].sellingMode.price.amount);
+                  cost[i] = del + pr;
+                  //cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
+                  cost[i] = cost[i].toFixed(2);
+                  console.log(parseFloat(givenProducts[j][i].delivery.lowestPrice.amount));
+                  console.log(parseFloat(givenProducts[j][i].sellingMode.price.amount));
+                  console.log(cost[i]);
+
                 } else {
                   console.log("else");
                   name[i] = "brak wynikow";
