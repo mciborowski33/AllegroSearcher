@@ -97,16 +97,76 @@ function getGivenProduct(givenProductUrl, givenProductArray, num){
         //console.log(givenProductArray[num].items.regular);
         num+=1;
         if( num == givenProductUrl.length )
-            selectBest( givenProductArray );
+            //selectBest( givenProductArray );
+            //getReputation(givenProductArray, 0, 0);
+            simplifyArrays(givenProductArray);
         if( num < givenProductUrl.length )
             getGivenProduct(givenProductUrl, givenProductArray, num);
     });
 
 }
 
-function getSellerReputation(sellerId){
+function simplifyArrays(givenProductArray){
 
+  givenProducts = [];
+  numberOfSelectedProduct = givenProductArray.length;
+  numberOfItems = [];
+  sellersList = [];
+  summaryCost = [];
+  reputation = [];
+
+  for (k = 0; k<numberOfSelectedProduct; k++ ){
+      console.log("promowane");
+      console.log(givenProductArray[k].items.promoted.length);
+      console.log("regular");
+      console.log(givenProductArray[k].items.regular.length);
+      //if(givenProductArray[k].items.regular.length == 0){
+      //  givenProducts[k] = givenProductArray[k].items.promoted;
+      if(givenProductArray[k].items.promoted.length == 0 && givenProductArray[k].items.regular.length == 0){
+        //givenProducts[k] = null;
+        givenProducts[k] = givenProductArray[k].items.promoted;
+        //givenProducts[k] =[];
+        //givenProducts[k][0].id = 'null';
+        console.log(givenProducts[k].length);
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA");
+        //moge tak? xd
+      } else if(givenProductArray[k].items.promoted.length == 0){
+        givenProducts[k] = givenProductArray[k].items.regular;
+      } else if(givenProductArray[k].items.regular.length == 0){
+        givenProducts[k] = givenProductArray[k].items.promoted;
+      } else{
+        givenProducts[k] = givenProductArray[k].items.regular;
+        for (i = 0; i<givenProductArray[k].items.promoted.length; i++ ){
+            givenProducts[k].push(givenProductArray[k].items.promoted[i]);
+        }
+        summaryCost[k] = [];
+
+        //dodanie parametru totalCost
+        for (j = 0; j < givenProducts[k].length; j++ ){
+            //summaryCost[k][j] = givenProducts[k][j].delivery.lowestPrice.amount;
+            summaryCost[k][j] = parseFloat(givenProducts[k][j].delivery.lowestPrice.amount) + parseFloat(givenProducts[k][j].sellingMode.price.amount);
+            givenProducts[k][j].totalCost = summaryCost[k][j];
+            //console.log(summaryCost[k][j]);
+        }
+        //algorytm sortowania po cenie
+        givenProducts[k].sort((a, b) => (a.totalCost > b.totalCost) ? 1 : -1);
+        //console.log(givenProducts[k]);
+
+      }
+
+  }
+  console.log(givenProducts);
+  //tu zamienic selectBest na getReputation jak chcecie zobaczyc ile mu schodzi
+  //z pobraniem reputacji dla kazdego sprzedawcy
+  //getReputation(givenProducts, 0, 0);
+  selectBest(givenProducts);
+}
+
+function getReputation(givenProductArray, num, index){
+  sellerId = givenProductArray[num][index].seller.id;
+  //console.log(sellerId);
     let optionsQuery = {
+
       url: 'https://api.allegro.pl/users/' + sellerId + '/ratings-summary',
       headers: {
           'Authorization': 'Bearer ' + access_token,
@@ -117,66 +177,49 @@ function getSellerReputation(sellerId){
     request.get(optionsQuery, function(error, response, body){
         //console.log("proba");
         sellerReputation = JSON.parse(body);
+        givenProductArray[num][index].reputation = sellerReputation.recommendedPercentage;
+        console.log(givenProductArray[num][index].reputation);
         //console.log("reputacja sprzedawcy");
-        console.log(sellerReputation);
-        return sellerReputation.recommendedPercentage;
+        index+=1;
+        if( index < givenProductArray[num].length ){
+          getReputation(givenProductArray, num, index);
+        }
+        if( index == givenProductArray[num].length ){
+          num = num+1;
+          console.log("num");
+          console.log(num);
+          if ( num == givenProductArray.length ){
+            console.log("selectBest");
+            selectBest( givenProductArray );
+          } else{
+            getReputation(givenProductArray, num, 0);
+          }
+        }
+        console.log("num i index");
+        console.log(num);
+        console.log(index);
+
+
+        //console.log(sellerReputation);
+        //return sellerReputation.recommendedPercentage;
     });
 }
 
-function selectBest(givenProductArray){
+function selectBest(givenProducts){
 
     //console.log("DATA = " + JSON.stringify(givenProductArray[0]));
-    regularProducts = [];
+    //regularProducts = [];
+    /*
     givenProducts = [];
     numberOfSelectedProduct = givenProductArray.length;
     numberOfItems = [];
-    numberOfPromotedItems = [];
-    numberOfRegularItems = [];
+    //numberOfPromotedItems = [];
+    //numberOfRegularItems = [];
     sellersList = [];
-    deliveryCosts = [];
+    summaryCost = [];
     reputation = [];
     //delivery = 0;
     //price = 0;
-
-    for (k = 0; k<numberOfSelectedProduct; k++ ){
-        console.log("promowane");
-        console.log(givenProductArray[k].items.promoted.length);
-        console.log("regular");
-        console.log(givenProductArray[k].items.regular.length);
-        //if(givenProductArray[k].items.regular.length == 0){
-        //  givenProducts[k] = givenProductArray[k].items.promoted;
-        if(givenProductArray[k].items.promoted.length == 0 && givenProductArray[k].items.regular.length == 0){
-          //givenProducts[k] = null;
-          givenProducts[k] = givenProductArray[k].items.promoted;
-          //givenProducts[k] =[];
-          //givenProducts[k][0].id = 'null';
-          console.log(givenProducts[k].length);
-          console.log("AAAAAAAAAAAAAAAAAAAAAAAAAA");
-          //moge tak? xd
-        } else if(givenProductArray[k].items.promoted.length == 0){
-          givenProducts[k] = givenProductArray[k].items.regular;
-        } else if(givenProductArray[k].items.regular.length == 0){
-          givenProducts[k] = givenProductArray[k].items.promoted;
-        } else{
-          givenProducts[k] = givenProductArray[k].items.regular;
-          for (i = 0; i<givenProductArray[k].items.promoted.length; i++ ){
-              givenProducts[k].push(givenProductArray[k].items.promoted[i]);
-          }
-          deliveryCosts[k] = [];
-
-          //dodanie parametru totalCost
-          for (j = 0; j < givenProducts[k].length; j++ ){
-              //deliveryCosts[k][j] = givenProducts[k][j].delivery.lowestPrice.amount;
-              deliveryCosts[k][j] = parseFloat(givenProducts[k][j].delivery.lowestPrice.amount) + parseFloat(givenProducts[k][j].sellingMode.price.amount);
-              givenProducts[k][j].totalCost = deliveryCosts[k][j];
-              //console.log(deliveryCosts[k][j]);
-          }
-          //algorytm sortowania po cenie
-          givenProducts[k].sort((a, b) => (a.totalCost > b.totalCost) ? 1 : -1);
-          //console.log(givenProducts[k]);
-
-        }
-
 
         //reputacja
 
@@ -186,10 +229,10 @@ function selectBest(givenProductArray){
         for (j = 0; j < givenProducts[k].length; j++ ){
           sellerId = givenProducts[k][j].seller.id;
           console.log(sellerId);
-          //reputation[k][j] = getSellerReputation(sellerId);
+          //reputation[k][j] = getReputation(sellerId);
           //sleep(100);
-          console.log(getSellerReputation(sellerId));
-        }*/
+          console.log(getReputation(sellerId));
+        }
 
         //givenProducts[k]
         //console.log(givenProducts[k]);
@@ -203,6 +246,21 @@ function selectBest(givenProductArray){
             sellersList[k][j] = givenProducts[k][j].seller.id;
         }
 
+    }*/
+    numberOfSelectedProduct = givenProducts.length;
+    numberOfItems = [];
+    sellersList = [];
+
+    for (k = 0; k<numberOfSelectedProduct; k++ ){
+      numberOfItems[k] = givenProducts[k].length;
+      console.log("wszystkie");
+      console.log(numberOfItems[k]);
+      //console.log(givenProducts[k]);
+      sellersList[k] = [];
+
+      for (j = 0; j < numberOfItems[k]; j++ ){
+          sellersList[k][j] = givenProducts[k][j].seller.id;
+      }
     }
     //console.log(sellersList);
     differentsellers = true;
