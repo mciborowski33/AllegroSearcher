@@ -10,14 +10,6 @@ const request = require('request');
 
 const port = 80;
 let globalSocket;
-let checkedSellers =[];
-
-class SellerInfo{
-  constructor(sellerId, verified){
-    this.sellerId = sellerId;
-    this.verified = verified;
-  }
-}
 
 
 app.use('/img', express.static('img'));
@@ -35,14 +27,11 @@ const client_secret = 'OsucPMjJHv9rMNSm3fJwORUfjASJ3sEUO9u6MIyVkxB2RwZ4WcQlHC0fY
 let access_token = '';
 
 class ExitProduct{
-    constructor(name,link,price,sellerId, productIndex, differentSellers){
+    constructor(name,link,price,sellerId){
         this.name = name;
         this.link = 'https://allegro.pl/oferta/'+link;
         this.price = price;
         this.sellerId = sellerId;
-        this.productIndex = productIndex;
-        this.differentSellers = differentSellers;
-
     }
 }
 
@@ -61,27 +50,6 @@ function init(){
         access_token = JSON.parse(body).access_token;
     }
 };
-
-function sellerIncludes(sellerId){
-  var found = false;
-  var goodReputation = false;
-  //var goodReputation = false;
-  //console.log("CheckedSellers: " + checkedSellers.length);
-  for(var i = 0; i < checkedSellers.length; i++) {
-      //console.log("Checked " + sellerId + " vs " + checkedSellers[i].sellerId);
-    if (checkedSellers[i].sellerId == sellerId) {
-        found = true;
-        if(checkedSellers[i].verified == true){
-          goodReputation = true;
-        } else {
-          goodReputation = false;
-        }
-        //return true;
-        break;
-    }
-  }
-  return obj = {found: found, goodReputation: goodReputation};
-}
 
 function sleep(milliseconds) {
   var start = new Date().getTime();
@@ -141,6 +109,7 @@ function getGivenProduct(givenProductUrl){
     catch{
         console.log("DOWNLOAD ERROR");
     }
+
 }
 
 function simplifyArrays(givenProductArray){
@@ -196,9 +165,7 @@ function simplifyArrays(givenProductArray){
   //tu zamienic selectBest na getReputation jak chcecie zobaczyc ile mu schodzi
   //z pobraniem reputacji dla kazdego sprzedawcy
   //getReputation(givenProducts, 0, 0);
-  //selectBest(givenProducts);
-  return givenProducts;
-  //ifDifferentSellers(givenProducts);
+  selectBest(givenProducts);
 }
 
 function getReputation(givenProductArray, num, index){
@@ -244,7 +211,7 @@ function getReputation(givenProductArray, num, index){
     });
 }
 
-function getReputation2(sellerId, givenProducts){
+function getReputation2(sellerId){
 
   let optionsQuery = {
     url: 'https://api.allegro.pl/users/' + sellerId + '/ratings-summary',
@@ -265,83 +232,6 @@ function getReputation2(sellerId, givenProducts){
   });
 
 }
-
-async function askForSeller(sellerId){
-
-    let optionsQuery = {
-      url: 'https://api.allegro.pl/users/' + sellerId + '/ratings-summary',
-      headers: {
-          'Authorization': 'Bearer ' + access_token,
-          'Accept': 'application/vnd.allegro.public.v1+json'
-      },
-    };
-
-    try{
-        return new Promise(function(resolve, reject) {
-            request.get(optionsQuery, function(error, response, body){
-                if( error ) reject(error);
-                //console.log(body);
-                console.log("JSON for sellerID " + sellerId + " downloaded.");
-                sellerReputationJson = JSON.parse(body);
-                resolve(sellerReputationJson);
-                //console.log(givenProductArray[num].items.regular);
-                //return sellerReputation;
-            });
-
-        });
-    }
-    catch{
-        console.log("ERROR");
-    }
-}
-
-async function getReputation3(exit, givenProducts, numberOfSelectedProduct, differentSellers){
-
-    isDeleted = false;
-    for(k =0; k <3; k++){
-      for (j = 0; j < numberOfSelectedProduct; j++) {
-        sellerId = exit[k][j].sellerId;
-        if(sellerIncludes(sellerId).found){
-            //console.log(sellerId + " FOUND");
-          if(!sellerIncludes(sellerId).goodReputation){
-            productIndex = exit[k][j].productIndex;
-            givenProducts.splice(productIndex, 1);
-            isDeleted = true;
-          }
-        }else{
-          verified = true;
-          if(sellerId != ""){
-
-              sellerReputationJson = await askForSeller(sellerId);
-            sellerReputation = sellerReputationJson.recommendedPercentage;
-            console.log("REPUTACJA:" + sellerId + " " + sellerReputation);
-            if(parseFloat(sellerReputation)<parseFloat(98)){
-              console.log("usuwamy reputacje");
-              //console.log(sellerReputation);
-              productIndex = exit[k][j].productIndex;
-              console.log("INDEX: " + productIndex);
-              console.log("LEN= " + givenProducts.length);
-              console.log("k= " + k);
-              console.log(JSON.stringify(givenProducts[k]))
-              givenProducts[j].splice(productIndex, 1); // raczej coś nie tak, chyba nie usuwamy dobrej rzeczy
-              verified = false;
-              isDeleted = true;
-            }
-            sellerInfo = new SellerInfo(sellerId, verified);
-            checkedSellers.push(sellerInfo);
-          }
-        }
-      }
-    }
-    if (isDeleted){
-      selectBest2(differentSellers, givenProducts);
-    } else {
-      emitFinalExit(exit);
-    }
-
-}
-
-
 
 function selectBest(givenProducts){
 
@@ -429,7 +319,6 @@ function selectBest(givenProducts){
               id = [];
               cost = [];
               sellerId = [];
-              productIndex = [];
               count = 0;
               for (i = 0; i < 3; i++) {
                 if (givenProducts[j].length > 0){
@@ -448,7 +337,6 @@ function selectBest(givenProducts){
                   cost[i] = del + pr;
                   //cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
                   cost[i] = cost[i].toFixed(2);
-                  productIndex[i] = a;
                   console.log(parseFloat(givenProducts[j][a].delivery.lowestPrice.amount));
                   console.log(parseFloat(givenProducts[j][a].sellingMode.price.amount));
                   console.log(cost[i]);
@@ -463,7 +351,6 @@ function selectBest(givenProducts){
                   id[i] = "";
                   cost[i] = 0;
                   sellerId[i] =0;
-                  productIndex[i] = 0;
                 }
 
                 //cost = parseFloat(givenProducts[j][0].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
@@ -474,11 +361,11 @@ function selectBest(givenProducts){
                 //console.log(exit[k][j]);
               }
 
-              exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
+              exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k]);
               /*
               console.log(sellerId[k]);
-              reputation = getReputation2(sellerId[k], givenProducts);
-              //sleep(1000);
+              reputation = getReputation2(sellerId[k]);
+              sleep(1000);
               console.log("ania");
               if (reputation < 98){
                 index = givenProducts[j].seller.id.indexOf(sellerId[k]);
@@ -497,112 +384,8 @@ function selectBest(givenProducts){
         console.log(finalExit);
     }
 
-    globalSocket.emit( 'results', finalExit );
-}
-
-function ifDifferentSellers(givenProducts){
-  differentsellers = true;
-
-  numberOfSelectedProduct = givenProducts.length;
-  numberOfItems = [];
-  sellersList = [];
-
-  for (k = 0; k<numberOfSelectedProduct; k++ ){
-    numberOfItems[k] = givenProducts[k].length;
-    console.log("wszystkie");
-    console.log(numberOfItems[k]);
-    //console.log(givenProducts[k]);
-    sellersList[k] = [];
-
-    for (j = 0; j < numberOfItems[k]; j++ ){
-        sellersList[k][j] = givenProducts[k][j].seller.id;
-    }
-  }
-  //console.log(sellersList);
-
-  //echo("czy sie powtarzaja?\n");
-  for (k = 0; k < numberOfSelectedProduct; k++ ){
-    for (j = 0; j < numberOfItems[k]; j++ ){
-      for (n = k+1; n < numberOfSelectedProduct; n++){
-        for (m = 0; m < numberOfItems[n]; m++ ){
-          if (sellersList[k][j] == sellersList[n][m]) {
-            console.log("Powtarzaja sie:\n");
-            differentsellers = false;
-          }
-        }
-      }
-    }
-  }
-  return differentsellers;
-  //selectBest2(differentsellers, givenProducts);
-}
-//setfinalExit(exit, )
-
-function selectBest2(differentSellers, givenProducts) {
-    console.log("GIVEN PRODUCTS: " + givenProducts.length);
-    if( givenProducts.length > 0 )
-        console.log("GIVEN PRODUCTS: " + JSON.stringify(givenProducts.length));
-  numberOfSelectedProduct = givenProducts.length;
-  exit = [];
-  finalExit = '';
-  console.log(givenProducts[2]);
-  if (differentsellers == true) {
-      console.log("nie powtarzaja sie");
-      for (k =0; k <3; k++){
-          exit[k] = [];
-          for (j = 0; j < numberOfSelectedProduct; j++) {
-            name = [];
-            id = [];
-            cost = [];
-            sellerId = [];
-            productIndex = [];
-            count = 0;
-            for (i = 0; i < 3; i++) {
-              if (givenProducts[j].length > 0){
-                a = i;
-                if(givenProducts[j].length == a){
-                  //count = count +1;
-                  a = a-1;
-                } else if(givenProducts[j].length < a){
-                  a = a-2;
-                }
-                name[i] = givenProducts[j][a].name;
-                console.log(name[a]);
-                id[i] = givenProducts[j][a].id;
-                del = parseFloat(givenProducts[j][a].delivery.lowestPrice.amount);
-                pr = parseFloat(givenProducts[j][a].sellingMode.price.amount);
-                cost[i] = del + pr;
-                //cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
-                cost[i] = cost[i].toFixed(2);
-                productIndex[i] = a;
-                console.log(parseFloat(givenProducts[j][a].delivery.lowestPrice.amount));
-                console.log(parseFloat(givenProducts[j][a].sellingMode.price.amount));
-                console.log(cost[i]);
-                sellerId[i] = givenProducts[j][a].seller.id;
-
-              } else {
-                console.log("else");
-                name[i] = "brak wynikow";
-                id[i] = "";
-                cost[i] = 0;
-                sellerId[i] =0;
-                productIndex[i] = 0;
-              }
-            }
-
-            exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
-          }
-      }
-      console.log(exit);
-      emitFinalExit(exit);
-      //getReputation3(exit, givenProducts, numberOfSelectedProduct, differentSellers);
-  }
-}
-
-function emitFinalExit(exit){
-  finalExit = JSON.stringify(exit);
-  console.log(finalExit);
-  globalSocket.emit( 'results', finalExit );
+    return finalExit;
+    //globalSocket.emit( 'results', finalExit );
 }
 
 io.on('connection', function (socket) {
@@ -627,9 +410,5 @@ io.on('connection', function (socket) {
         }
 
         console.log("Gotowa tablica: " + givenProductArray.length);
-
-        givenProductArray = simplifyArrays(givenProductArray);
-        var differentSellers = ifDifferentSellers(givenProductArray);
-        selectBest2(differentSellers, givenProductArray);
     });
 });
