@@ -715,6 +715,57 @@ function selectBest2(differentSellers, givenProducts) {
 
     //wybrac do exitu
     exit =[];
+    firstExit = [];
+
+    for(i = 0; i < 3; i++) {
+      if (sets.length > 0){
+        a = i;
+        if(sets.length == a){
+          //count = count +1;
+          a = a-1;
+        } else if(sets.length < a){
+          a = a-2;
+        }
+
+      firstExit[i] = sets[a];
+      console.log(firstExit[i]);
+      name = [];
+      id = [];
+      cost = [];
+      sellerId = [];
+      productIndex = [];
+
+      for(j=0; j<numberOfSelectedProduct; j++){
+
+        name[j] = firstExit[i][j].name;
+        id[j] = firstExit[i][j].id;
+        console.log(firstExit[i][j].name);
+        console.log(firstExit[i][j].delivery);
+        del = parseFloat(firstExit[i][j].delivery.lowestPrice.amount);
+        pr = parseFloat(firstExit[i][j].sellingMode.price.amount);
+        cost[j] = del + pr;
+        cost[j] = cost[j].toFixed(2);
+        sellerId[j] = firstExit[i][j].seller.id;
+        productIndex[j] = i;
+      }
+
+    }else{
+      console.log("else");
+      name[i] = "brak wynikow";
+      id[i] = "";
+      cost[i] = 0;
+      sellerId[i] =0;
+      productIndex[i] = 0;
+    }
+
+      exit[i] = [];
+      for(j=0; j<name.length; j++){
+        exit[i][j] = new ExitProduct(name[j], id[j], cost[j], sellerId[j], productIndex[j]);
+        console.log(name[j] + " " + id[j] + " " + cost[j] + " " + sellerId[j] + " " + productIndex[j]);
+      }
+
+  }
+    /*
     for(j=0; j<firstExit[i].length; j++){
       firstExit = [];
       name = [];
@@ -769,6 +820,7 @@ function selectBest2(differentSellers, givenProducts) {
         }
       }
     }
+    */
 
 
       console.log("firstExit");
@@ -785,7 +837,7 @@ function selectBest2(differentSellers, givenProducts) {
 
 
   }
-  exit = sets;
+  //exit = sets;
   console.log(exit);
   emitFinalExit(exit);
 }
