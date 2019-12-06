@@ -9,12 +9,12 @@ var socket = io.connect('http://localhost');
 });
 
 function display(result){
-  var listLength = product_array.length;
-  console.log(listLength);
+  //var listLength = product_array.length;
+  //console.log(listLength);
   for(i=0; i<3; i++){
     var price = parseFloat(0);
     var sp = document.createElement("SPAN");
-    for(j=0; j<listLength; j++){
+    for(j=0; j<result[i].length; j++){
       var product = result[i][j];
       price = price + parseFloat(product.price);
       var id = 'r' + (i+1);

@@ -619,7 +619,7 @@ function selectBest2(differentSellers, givenProducts) {
     }
     */
 
-
+      var productsFound = numberOfSelectedProduct;
       temporaryProducts = givenProducts;
       for(j =0; j< numberOfSelectedProduct; j++){
         console.log(givenProducts[j].length);
@@ -628,6 +628,18 @@ function selectBest2(differentSellers, givenProducts) {
         }
         //total = total*len[j];
       }
+
+      var counter = 0;
+      while( counter < temporaryProducts.length ){
+        if( temporaryProducts[counter].length == 0 ){
+          temporaryProducts.splice(counter, 1);
+          productsFound--;
+        }
+        else{
+          counter++;
+        }
+      }
+
       var sets = [], arg = temporaryProducts, max = arg.length-1;
       function helper(arr, m) {
         for (var n=0, l=arg[m].length; n<l; n++) { //arg[m].length
@@ -645,7 +657,7 @@ function selectBest2(differentSellers, givenProducts) {
 
     for(i =0; i<sets.length; i++){
       seller = [];
-      for(j =0; j<numberOfSelectedProduct; j++){
+      for(j =0; j<productsFound; j++){
         seller[j] = sets[i][j].seller.id;
       }
       //console.log("has duplicates");
@@ -703,7 +715,7 @@ function selectBest2(differentSellers, givenProducts) {
     //dodanie parametru totalCost
     for (j = 0; j < sets.length; j++ ){
       summaryCost[j] =0;
-      for (i =0; i < numberOfSelectedProduct; i++){
+      for (i =0; i < productsFound; i++){
         summaryCost[j] = summaryCost[j] + parseFloat(sets[j][i].delivery.lowestPrice.amount) + parseFloat(sets[j][i].sellingMode.price.amount);
       }
       sets[j].totalCost = summaryCost[j];
@@ -718,6 +730,13 @@ function selectBest2(differentSellers, givenProducts) {
     firstExit = [];
 
     for(i = 0; i < 3; i++) {
+
+      name = [];
+      id = [];
+      cost = [];
+      sellerId = [];
+      productIndex = [];
+
       if (sets.length > 0){
         a = i;
         if(sets.length == a){
@@ -729,13 +748,9 @@ function selectBest2(differentSellers, givenProducts) {
 
       firstExit[i] = sets[a];
       console.log(firstExit[i]);
-      name = [];
-      id = [];
-      cost = [];
-      sellerId = [];
-      productIndex = [];
 
-      for(j=0; j<numberOfSelectedProduct; j++){
+
+      for(j=0; j<productsFound; j++){
 
         name[j] = firstExit[i][j].name;
         id[j] = firstExit[i][j].id;
