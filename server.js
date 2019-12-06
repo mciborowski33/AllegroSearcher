@@ -539,64 +539,267 @@ function ifDifferentSellers(givenProducts){
 //setfinalExit(exit, )
 
 function selectBest2(differentSellers, givenProducts) {
+  sets = [];
+  len = [];
     console.log("GIVEN PRODUCTS: " + givenProducts.length);
     if( givenProducts.length > 0 )
         console.log("GIVEN PRODUCTS: " + JSON.stringify(givenProducts.length));
   numberOfSelectedProduct = givenProducts.length;
-  exit = [];
-  finalExit = '';
-  console.log(givenProducts[2]);
+
   if (differentsellers == true) {
-      console.log("nie powtarzaja sie");
-      for (k =0; k <3; k++){
-          exit[k] = [];
-          for (j = 0; j < numberOfSelectedProduct; j++) {
-            name = [];
-            id = [];
-            cost = [];
-            sellerId = [];
-            productIndex = [];
-            count = 0;
-            for (i = 0; i < 3; i++) {
-              if (givenProducts[j].length > 0){
-                a = i;
-                if(givenProducts[j].length == a){
-                  //count = count +1;
-                  a = a-1;
-                } else if(givenProducts[j].length < a){
-                  a = a-2;
-                }
-                name[i] = givenProducts[j][a].name;
-                console.log(name[a]);
-                id[i] = givenProducts[j][a].id;
-                del = parseFloat(givenProducts[j][a].delivery.lowestPrice.amount);
-                pr = parseFloat(givenProducts[j][a].sellingMode.price.amount);
-                cost[i] = del + pr;
-                //cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
-                cost[i] = cost[i].toFixed(2);
-                productIndex[i] = a;
-                console.log(parseFloat(givenProducts[j][a].delivery.lowestPrice.amount));
-                console.log(parseFloat(givenProducts[j][a].sellingMode.price.amount));
-                console.log(cost[i]);
-                sellerId[i] = givenProducts[j][a].seller.id;
-
-              } else {
-                console.log("else");
-                name[i] = "brak wynikow";
-                id[i] = "";
-                cost[i] = 0;
-                sellerId[i] =0;
-                productIndex[i] = 0;
+    exit = [];
+    finalExit = '';
+    console.log(givenProducts[2]);
+    console.log("nie powtarzaja sie");
+    for (k =0; k <3; k++){
+        exit[k] = [];
+        sets[k] = [];
+        for (j = 0; j < numberOfSelectedProduct; j++) {
+          name = [];
+          id = [];
+          cost = [];
+          sellerId = [];
+          productIndex = [];
+          count = 0;
+          for (i = 0; i < 3; i++) {
+            if (givenProducts[j].length > 0){
+              a = i;
+              if(givenProducts[j].length == a){
+                //count = count +1;
+                a = a-1;
+              } else if(givenProducts[j].length < a){
+                a = a-2;
               }
-            }
+              name[i] = givenProducts[j][a].name;
+              console.log(name[a]);
+              id[i] = givenProducts[j][a].id;
+              del = parseFloat(givenProducts[j][a].delivery.lowestPrice.amount);
+              pr = parseFloat(givenProducts[j][a].sellingMode.price.amount);
+              cost[i] = del + pr;
+              //cost[i] = parseFloat(givenProducts[j][i].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
+              cost[i] = cost[i].toFixed(2);
+              productIndex[i] = a;
+              console.log(parseFloat(givenProducts[j][a].delivery.lowestPrice.amount));
+              console.log(parseFloat(givenProducts[j][a].sellingMode.price.amount));
+              console.log(cost[i]);
+              sellerId[i] = givenProducts[j][a].seller.id;
 
-            exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
+            } else {
+              console.log("else");
+              name[i] = "brak wynikow";
+              id[i] = "";
+              cost[i] = 0;
+              sellerId[i] =0;
+              productIndex[i] = 0;
+            }
           }
-      }
+          sets[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
+          //exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
+        }
+    }
+      exit = sets;
       console.log(exit);
       emitFinalExit(exit);
       //getReputation3(exit, givenProducts, numberOfSelectedProduct, differentSellers);
+  } else {
+    console.log("tu jest algorytm");
+    console.log(numberOfSelectedProduct);
+    total = 1;
+
+    /*
+    for(j =0; j< numberOfSelectedProduct; j++){
+
+      console.log(givenProducts[j].length);
+      if(givenProducts[j].length < 5){
+        len[j] = givenProducts[j].length;
+      }else {
+        len[j] = 5;
+      }
+      total = total*len[j];
+    }
+    */
+
+
+      temporaryProducts = givenProducts;
+      for(j =0; j< numberOfSelectedProduct; j++){
+        console.log(givenProducts[j].length);
+        if(givenProducts[j].length > 5){
+          temporaryProducts[j].length = 5;
+        }
+        //total = total*len[j];
+      }
+      var sets = [], arg = temporaryProducts, max = arg.length-1;
+      function helper(arr, m) {
+        for (var n=0, l=arg[m].length; n<l; n++) { //arg[m].length
+            var a = arr.slice(0); // clone arr
+            a.push(arg[m][n]);
+            if (m==max)
+                sets.push(a);
+            else
+                helper(a, m+1);
+        }
+      }
+    helper([], 0);
+    //console.log(sets);
+    //console.log(sets.length);
+
+    for(i =0; i<sets.length; i++){
+      seller = [];
+      for(j =0; j<numberOfSelectedProduct; j++){
+        seller[j] = sets[i][j].seller.id;
+      }
+      //console.log("has duplicates");
+      //console.log(hasDuplicates(seller));
+      if (hasDuplicates(seller)){
+        allDuplicates = [];
+        usedIndexes = [];
+        //console.log(seller);
+
+        for( j = 0; j < seller.length; j++ ){
+          duplicates = [];
+          pattern = "";
+
+          for( m = 0; m < seller.length; m++ ){
+            if( !usedIndexes.includes(m) && pattern == "" ){
+              pattern = seller[m];
+              duplicates.push(m);
+              usedIndexes.push(m);
+            }
+            else if( seller[m] == pattern ){
+              duplicates.push(m);
+              usedIndexes.push(m);
+            }
+          }
+          if( duplicates.length > 1 )
+            allDuplicates.push( duplicates );
+        }
+
+        console.log("Duplicates: " + allDuplicates);
+        console.log(i);
+        for (j = 0; j< allDuplicates.length; j++){
+          deliveryCosts = [];
+          for( n = 0; n < allDuplicates[j].length; n++ ){
+            deliveryCosts.push(parseFloat(sets[i][allDuplicates[j][n]].delivery.lowestPrice.amount));
+            console.log("COST " + deliveryCosts[n]);
+          }
+          maxValue = Math.max.apply(Math, deliveryCosts);
+          maxIndex = deliveryCosts.indexOf(maxValue);
+          console.log("MAX VALUE " + maxValue);
+          console.log("MAX INDEX = " + maxIndex);
+          for (n = 0; n< allDuplicates[j].length; n++){
+            if (n != maxIndex){
+            console.log("PRZED: " + sets[i][allDuplicates[j][n]].delivery.lowestPrice.amount);
+            sets[i][allDuplicates[j][n]].delivery.lowestPrice.amount = 0;
+            console.log("PO: " + sets[i][allDuplicates[j][n]].delivery.lowestPrice.amount);
+          }
+          }
+      }
+      }
+
+    }
+    //sortowanie po sumarycznym koszcie
+    summaryCost = [];
+
+    //dodanie parametru totalCost
+    for (j = 0; j < sets.length; j++ ){
+      summaryCost[j] =0;
+      for (i =0; i < numberOfSelectedProduct; i++){
+        summaryCost[j] = summaryCost[j] + parseFloat(sets[j][i].delivery.lowestPrice.amount) + parseFloat(sets[j][i].sellingMode.price.amount);
+      }
+      sets[j].totalCost = summaryCost[j];
+
+    }
+    //algorytm sortowania po cenie
+    sets.sort((a, b) => (a.totalCost > b.totalCost) ? 1 : -1);
+    console.log("posortowane");
+
+    //wybrac do exitu
+    exit =[];
+    for(j=0; j<firstExit[i].length; j++){
+      firstExit = [];
+      name = [];
+      id = [];
+      cost = [];
+      sellerId = [];
+      productIndex = [];
+      for (i = 0; i < 3; i++) {
+
+        if (sets.length > 0){
+          a = i;
+          if(sets.length == a){
+            //count = count +1;
+            a = a-1;
+          } else if(sets.length < a){
+            a = a-2;
+          }
+
+          firstExit[i] = sets[a];
+          console.log(firstExit[i]);
+
+          name[i] = firstExit[i][j].name;
+          id[i] = firstExit[i][j].id;
+          console.log(firstExit[i][j].name);
+          console.log(firstExit[i][j].delivery);
+          del = parseFloat(firstExit[i][j].delivery.lowestPrice.amount);
+          pr = parseFloat(firstExit[i][j].sellingMode.price.amount);
+          cost[i] = del + pr;
+          cost[i] = cost[i].toFixed(2);
+          sellerId[i] = firstExit[i][j].seller.id;
+          productIndex[i] = i;
+
+          //if(givenProducts[j].length == i+1) {
+          //  i = i-1;
+          //}
+
+        }else {
+          console.log("else");
+          name[i] = "brak wynikow";
+          id[i] = "";
+          cost[i] = 0;
+          sellerId[i] =0;
+          productIndex[i] = 0;
+      }
+    }
+      //sets[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
+      for (k=0; k<3; k++){
+        exit[k] = [];
+        for(j=0; j<numberOfSelectedProduct; j++){
+          exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k], productIndex[k]);
+          console.log("tu ma byc new exitProduct");
+        }
+      }
+    }
+
+
+      console.log("firstExit");
+
+      //console.log(firstExit);
+
+      //cost = parseFloat(givenProducts[j][0].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
+
+      //console.log(exit[k][j]);
+      //exit[k][j] = new ExitProduct("imieproduktu", "link do produktu", "koszt produktu plus jego wysylka");
+      //exit[k][j] = new ExitProduct(name[i], id[i], cost[i]);
+      //console.log(exit[k][j]);
+
+
+
   }
+  exit = sets;
+  console.log(exit);
+  emitFinalExit(exit);
+}
+
+function hasDuplicates(array) {
+    var valuesSoFar = Object.create(null);
+    for (var i = 0; i < array.length; ++i) {
+        var value = array[i];
+        if (value in valuesSoFar) {
+            return true;
+        }
+        valuesSoFar[value] = true;
+    }
+    return false;
 }
 
 function emitFinalExit(exit){
