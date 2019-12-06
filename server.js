@@ -27,10 +27,11 @@ const client_secret = 'OsucPMjJHv9rMNSm3fJwORUfjASJ3sEUO9u6MIyVkxB2RwZ4WcQlHC0fY
 let access_token = '';
 
 class ExitProduct{
-    constructor(name,link,price){
+    constructor(name,link,price,sellerId){
         this.name = name;
         this.link = 'https://allegro.pl/oferta/'+link;
         this.price = price;
+        this.sellerId = sellerId;
     }
 }
 
@@ -205,6 +206,28 @@ function getReputation(givenProductArray, num, index){
     });
 }
 
+function getReputation2(sellerId){
+
+  let optionsQuery = {
+    url: 'https://api.allegro.pl/users/' + sellerId + '/ratings-summary',
+    headers: {
+        'Authorization': 'Bearer ' + access_token,
+        'Accept': 'application/vnd.allegro.public.v1+json'
+    },
+  };
+
+  request.get(optionsQuery, function(error, response, body){
+      //console.log(body);
+      console.log("JSON for sellerID " + sellerId + " downloaded.");
+      sellerReputationJson = JSON.parse(body);
+      //console.log(givenProductArray[num].items.regular);
+      sellerReputation = sellerReputationJson.recommendedPercentage;
+      console.log(sellerReputation);
+      return sellerReputation;
+  });
+
+}
+
 function selectBest(givenProducts){
 
     //console.log("DATA = " + JSON.stringify(givenProductArray[0]));
@@ -290,6 +313,7 @@ function selectBest(givenProducts){
               name = [];
               id = [];
               cost = [];
+              sellerId = [];
               count = 0;
               for (i = 0; i < 3; i++) {
                 if (givenProducts[j].length > 0){
@@ -311,6 +335,7 @@ function selectBest(givenProducts){
                   console.log(parseFloat(givenProducts[j][a].delivery.lowestPrice.amount));
                   console.log(parseFloat(givenProducts[j][a].sellingMode.price.amount));
                   console.log(cost[i]);
+                  sellerId[i] = givenProducts[j][a].seller.id;
                   //if(givenProducts[j].length == i+1) {
                   //  i = i-1;
                   //}
@@ -320,6 +345,7 @@ function selectBest(givenProducts){
                   name[i] = "brak wynikow";
                   id[i] = "";
                   cost[i] = 0;
+                  sellerId[i] =0;
                 }
 
                 //cost = parseFloat(givenProducts[j][0].delivery.lowestPrice.amount) + parseFloat(givenProducts[j][i].sellingMode.price.amount);
@@ -330,7 +356,19 @@ function selectBest(givenProducts){
                 //console.log(exit[k][j]);
               }
 
-              exit[k][j] = new ExitProduct(name[k], id[k], cost[k]);
+              exit[k][j] = new ExitProduct(name[k], id[k], cost[k], sellerId[k]);
+              /*
+              console.log(sellerId[k]);
+              reputation = getReputation2(sellerId[k]);
+              sleep(1000);
+              console.log("ania");
+              if (reputation < 98){
+                index = givenProducts[j].seller.id.indexOf(sellerId[k]);
+                console.log(index);
+              }
+              */
+
+
 
               //exit[k][j] = new ExitProduct(name, id, cost);
 
