@@ -849,12 +849,12 @@ function selectBest2(differentSellers, givenProducts) {
       //exit[k][j] = new ExitProduct(name[i], id[i], cost[i]);
       //console.log(exit[k][j]);
 
-
+      console.log(exit);
+      emitFinalExit(exit);
 
   }
   //exit = sets;
-  console.log(exit);
-  emitFinalExit(exit);
+
 }
 
 function hasDuplicates(array) {

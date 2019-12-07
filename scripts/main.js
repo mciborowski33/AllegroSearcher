@@ -29,14 +29,17 @@ function hide(){
     var l = document.getElementById('loading');
     var r = document.getElementById('racoon');
     if(d1.style.display === "block"){
+        console.log("h1");
       d1.style.display="none";
       l.style.display="block";
       r.style.visibility = "hidden";
     }else if(l.style.display === "block"){
+        console.log("h2");
       l.style.display="none";
       d2.style.display="block";
       r.style.visibility = "visible";
     }else{
+        console.log("h3");
       d1.style.display="block";
       d2.style.display="none";
     }
