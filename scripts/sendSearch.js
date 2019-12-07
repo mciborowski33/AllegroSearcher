@@ -1,4 +1,5 @@
-var socket = io.connect('http://localhost');
+//let socket = io.connect('http://localhost');
+let socket = io();
 
     socket.on('token', function (data) {
         console.log(data);

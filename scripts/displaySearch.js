@@ -1,5 +1,6 @@
-var socket = io.connect('http://localhost');
-    socket.on('results', function (data) {
+//var socket = io.connect('http://localhost');
+
+socket.on('results', function (data) {
     //console.log(data);
     var result = JSON.parse(data);
     console.log(result);
